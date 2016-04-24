@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Two y axis with different scales</title>
+  <meta name="description" content="It is said that generally it’s not a good idea to create a plot with two y axis but with different scales1. So ggplot2 does not really support it basicly, th...">
+
+  <link rel="stylesheet" href="/r-blog/css/main.css">
+  <link rel="canonical" href="pintergreg.github.io/r-blog/two-y-axis-with-different-scales">
+  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="pintergreg.github.io/r-blog/feed.xml">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/r-blog/">My little R knowledgebase</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/r-blog/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Two y axis with different scales</h1>
+    <p class="post-meta"><time datetime="2016-04-03T10:48:30+02:00" itemprop="datePublished">Apr 3, 2016</time></p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>It is said that generally it’s not a good idea to create a plot with two y axis but with different scales<sup><a href="#ref1">1</a></sup>. So ggplot2 does not really support it basicly, there is only a hackish way to achieve it<sup><a href="#ref2">2</a></sup>. But as the <code class="highlighter-rouge">grid</code> package was not available (for R version 3.2.3), I tried something else.</p>
+
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># first, generate some data
+</span><span class="n">x</span> <span class="o">=</span> <span class="n">seq</span><span class="p">(</span><span class="n">from</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="m">7</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="m">58</span><span class="p">,</span> <span class="m">42</span><span class="p">,</span> <span class="m">61</span><span class="p">,</span> <span class="m">47</span><span class="p">,</span> <span class="m">32</span><span class="p">,</span> <span class="m">12</span><span class="p">,</span> <span class="m">20</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="m">38</span><span class="p">,</span> <span class="m">28</span><span class="p">,</span> <span class="m">54</span><span class="p">,</span> <span class="m">51</span><span class="p">,</span> <span class="m">35</span><span class="p">,</span> <span class="m">63</span><span class="p">,</span> <span class="m">57</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">&lt;-</span> <span class="n">data.frame</span><span class="p">(</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="n">b</span>
+<span class="p">)</span>
+<span class="c1"># define the file to save (it has to be done before plotting)
+</span><span class="n">png</span><span class="p">(</span><span class="n">file</span> <span class="o">=</span> <span class="s2">"output_f.png"</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s2">"cairo"</span><span class="p">)</span>
+
+<span class="c1"># create the first plot with line type, color deepskyblue4, scale 0..100 and some axis labels
+</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="o">$</span><span class="n">y1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s2">"l"</span><span class="p">,</span>
+	<span class="n">col</span><span class="o">=</span><span class="s2">"deepskyblue4"</span><span class="p">,</span>
+	<span class="n">xlab</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">ylab</span><span class="o">=</span><span class="s2">"a"</span><span class="p">,</span>
+	<span class="n">ylim</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># unites the plots 
+</span><span class="n">par</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
+         
+<span class="c1"># create the second plot with line type, color firebrick and scale 20..70
+# axis labels are empty, because they would be overlapped with the first ones
+# that would also happen with the axis ticks so xaxt and yaxt paramters are needed
+</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="o">$</span><span class="n">y2</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s2">"l"</span><span class="p">,</span>
+	<span class="n">col</span><span class="o">=</span><span class="s2">"firebrick"</span><span class="p">,</span>
+	<span class="n">xaxt</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span> <span class="n">yaxt</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span>
+	<span class="n">xlab</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">ylab</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+	<span class="n">ylim</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="m">20</span><span class="p">,</span> <span class="m">70</span><span class="p">)</span>
+<span class="p">)</span>
+   
+<span class="c1"># makes the scales of the second plot visible
+</span><span class="n">axis</span><span class="p">(</span><span class="m">4</span><span class="p">)</span>
+
+<span class="c1"># add title to the plot
+</span><span class="n">title</span><span class="p">(</span><span class="n">main</span> <span class="o">=</span> <span class="s2">"the title"</span><span class="p">)</span>
+
+<span class="c1"># add legend to the plot
+</span><span class="n">legend</span><span class="p">(</span><span class="s2">"topleft"</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="s2">"deepskyblue4"</span><span class="p">,</span><span class="s2">"firebrick"</span><span class="p">),</span> <span class="n">bty</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span> <span class="n">lty</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">))</span></code></pre></figure>
+
+<h1 id="result">Result</h1>
+
+<p><img src="/assets/two-y-axis.png" alt="The output image" /></p>
+
+<h1 id="summary">Summary</h1>
+
+<p>And the reason why two axis is not advised: at <code class="highlighter-rouge">x=3</code> <em>b</em> seems to be higher, but it is actually not! <strong>b</strong> is 54, and <strong>a</strong> is 61…</p>
+
+<h1 id="references">References</h1>
+<ol>
+  <li><a name="ref1"><a href="https://kieranhealy.org/blog/archives/2016/01/16/two-y-axes/">Two y axes</a></a></li>
+  <li><a name="ref2"><a href="https://rpubs.com/kohske/dual_axis_in_ggplot2">Dual axis in ggplot2</a></a></li>
+  <li><a name="ref3"><a href="https://github.com/kjhealy/two-y-axes/blob/master/two-y-axes.r">Two y axes - code on GitHub</a></a></li>
+</ol>
+
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">My little R knowledgebase</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>My little R knowledgebase</li>
+          <li><a href="mailto:"></a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/pintergreg"><span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">pintergreg</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>My "Today I Learned" posts mainly about R.
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
