@@ -37,7 +37,7 @@ ggsave(plot, file = "output.png", width = 8, height = 8, type = "cairo-png")
 
 # Result
 
-![The output image](/assets/grouped-bar-chart.png)
+![The output image]({{ site.baseurl }}/assets/grouped-bar-chart.png)
 
 # Melting
 

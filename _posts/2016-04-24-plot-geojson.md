@@ -5,7 +5,7 @@ date:   2016-04-24 10:23:00 +0200
 categories: r geojson ggplot2
 ---
 
-[A previous post]({% post_url 2016-04-22-get-administrative-bounderies-from-osm %}) tells how I got the districts of Budapest in geoJSON format, but can be also found [directly here](/assets/bp_districts.geojson).
+[A previous post]({{ site.baseurl }}{% post_url 2016-04-22-get-administrative-bounderies-from-osm %}) tells how I got the districts of Budapest in geoJSON format, but can be also found [directly here]({{ site.baseurl }}/assets/bp_districts.geojson).
 
 # R code to plot geoJSON
 

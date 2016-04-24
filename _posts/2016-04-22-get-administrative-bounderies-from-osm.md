@@ -9,7 +9,7 @@ categories: osm osmfilter qgis borders boundaries
 
 [Online service to get administrative boundaries from OSM][osm-boundaries-servise]
 
-![Screenshot](/assets/osm_boundaries_map.png)
+![Screenshot]({{ site.baseurl }}/assets/osm_boundaries_map.png)
 
 # Another method -- get boundaries from OSM file
 
@@ -19,7 +19,7 @@ BBBike has a convenient service to get OSM files from OpenStreetMap.
 
 [Online service for OSM extraction -- set for Budapest][bbbike]
 
-![Screenshot](/assets/bbbike_bp.jpg)
+![Screenshot]({{ site.baseurl }}/assets/bbbike_bp.jpg)
 
 ## After that using osmfilter to extract districts from osm file
 
@@ -29,7 +29,7 @@ $ ./osmfilter32 Budapest.osm --keep="admin_level=9" -o=bp_districts.osm
 
 The output osm file contained some unnecessary layers, I opened it in QGIS and kept only the "multipolygons" layer and saved as a geoJSON.
 
-![Screenshot](/assets/qgis_layers.png)
+![Screenshot]({{ site.baseurl }}/assets/qgis_layers.png)
 
 # References
 

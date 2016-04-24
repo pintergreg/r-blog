@@ -52,7 +52,7 @@ legend("topleft", col=c("deepskyblue4","firebrick"), bty="n", lty=1, legend=c("a
 
 # Result
 
-![The output image](/assets/two-y-axis.png)
+![The output image]({{ site.baseurl }}/assets/two-y-axis.png)
 
 # Summary
 

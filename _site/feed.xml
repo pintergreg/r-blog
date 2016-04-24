@@ -6,13 +6,13 @@
 </description>
     <link>pintergreg.github.io/r-blog/</link>
     <atom:link href="pintergreg.github.io/r-blog/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 24 Apr 2016 13:34:09 +0200</pubDate>
-    <lastBuildDate>Sun, 24 Apr 2016 13:34:09 +0200</lastBuildDate>
+    <pubDate>Sun, 24 Apr 2016 13:45:14 +0200</pubDate>
+    <lastBuildDate>Sun, 24 Apr 2016 13:45:14 +0200</lastBuildDate>
     <generator>Jekyll v3.1.3</generator>
     
       <item>
         <title>Plot geoJSON</title>
-        <description>&lt;p&gt;&lt;a href=&quot;/get-administrative-bounderies-from-osm&quot;&gt;A previous post&lt;/a&gt; tells how I got the districts of Budapest in geoJSON format, but can be also found &lt;a href=&quot;/assets/bp_districts.geojson&quot;&gt;directly here&lt;/a&gt;.&lt;/p&gt;
+        <description>&lt;p&gt;&lt;a href=&quot;/r-blog/get-administrative-bounderies-from-osm&quot;&gt;A previous post&lt;/a&gt; tells how I got the districts of Budapest in geoJSON format, but can be also found &lt;a href=&quot;/r-blog/assets/bp_districts.geojson&quot;&gt;directly here&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h1 id=&quot;r-code-to-plot-geojson&quot;&gt;R code to plot geoJSON&lt;/h1&gt;
 
@@ -95,7 +95,7 @@
 
 &lt;p&gt;&lt;a href=&quot;https://osm.wno-edv-service.de/boundaries/&quot;&gt;Online service to get administrative boundaries from OSM&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/osm_boundaries_map.png&quot; alt=&quot;Screenshot&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/r-blog/assets/osm_boundaries_map.png&quot; alt=&quot;Screenshot&quot; /&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;another-method----get-boundaries-from-osm-file&quot;&gt;Another method – get boundaries from OSM file&lt;/h1&gt;
 
@@ -105,7 +105,7 @@
 
 &lt;p&gt;&lt;a href=&quot;http://download.bbbike.org/osm/bbbike/Budapest/&quot;&gt;Online service for OSM extraction – set for Budapest&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/bbbike_bp.jpg&quot; alt=&quot;Screenshot&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/r-blog/assets/bbbike_bp.jpg&quot; alt=&quot;Screenshot&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;after-that-using-osmfilter-to-extract-districts-from-osm-file&quot;&gt;After that using osmfilter to extract districts from osm file&lt;/h2&gt;
 
@@ -115,7 +115,7 @@
 
 &lt;p&gt;The output osm file contained some unnecessary layers, I opened it in QGIS and kept only the “multipolygons” layer and saved as a geoJSON.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/qgis_layers.png&quot; alt=&quot;Screenshot&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/r-blog/assets/qgis_layers.png&quot; alt=&quot;Screenshot&quot; /&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;references&quot;&gt;References&lt;/h1&gt;
 
@@ -368,7 +368,7 @@
 
 &lt;h1 id=&quot;result&quot;&gt;Result&lt;/h1&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/two-y-axis.png&quot; alt=&quot;The output image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/r-blog/assets/two-y-axis.png&quot; alt=&quot;The output image&quot; /&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;summary&quot;&gt;Summary&lt;/h1&gt;
 
@@ -422,7 +422,7 @@
 
 &lt;h1 id=&quot;result&quot;&gt;Result&lt;/h1&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/grouped-bar-chart.png&quot; alt=&quot;The output image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/r-blog/assets/grouped-bar-chart.png&quot; alt=&quot;The output image&quot; /&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;melting&quot;&gt;Melting&lt;/h1&gt;
 
@@ -492,7 +492,7 @@
 
 &lt;h1 id=&quot;result&quot;&gt;Result&lt;/h1&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/output.png&quot; alt=&quot;The output image&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/r-blog/assets/output.png&quot; alt=&quot;The output image&quot; /&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;full-example&quot;&gt;Full example&lt;/h1&gt;
 

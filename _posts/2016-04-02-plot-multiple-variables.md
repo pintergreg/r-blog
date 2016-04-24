@@ -13,7 +13,7 @@ plot = ggplot(df, aes(x)) +
 
 # Result
 
-![The output image](/assets/output.png)
+![The output image]({{ site.baseurl }}/assets/output.png)
 
 # Full example
 {% highlight r %}
