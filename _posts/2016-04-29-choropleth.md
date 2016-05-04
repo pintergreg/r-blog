@@ -8,7 +8,7 @@ categories: r geojson ggplot2 choropleth
 Last time I managed to draw the districts of Budapest [using a GeoJSON]({{ site.baseurl }}{% post_url 2016-04-24-plot-geojson %}) [from OpenStreetMap]({{ site.baseurl }}{% post_url 2016-04-22-get-administrative-bounderies-from-osm %}). 
 
 But it would be nice if the districts would be filled with color according to the population.
-So I get the population data from the [Wikipedia](https://hu.wikipedia.org/wiki/Budapest_ker%C3%BCletei).
+So I got the population data from the [Wikipedia](https://hu.wikipedia.org/wiki/Budapest_ker%C3%BCletei).
 
 # Population data
 
@@ -94,3 +94,13 @@ ggsave(plot, file = "output3.png",  width = 8, height = 7, type = "cairo-png")
 
 [fortify-keep-info]: http://stackoverflow.com/questions/19791210/r-ggplot2-merge-with-shapefile-and-csv-data-to-fill-polygons
 [possibly-simple-solution]: http://stackoverflow.com/a/33353561
+
+# Other links
+
+* [Create nice choropleth][nice-choropleth]
+* [Static interactive maps][static-interactive-maps]
+* [Introduction to Spatial Data and ggplot2][spatial-data-and-ggplot2]
+
+[nice-choropleth]: http://www.r-bloggers.com/mapping-with-ggplot-create-a-nice-choropleth-map-in-r/
+[static-interactive-maps]: http://www.r-bloggers.com/making-static-interactive-maps-with-ggvis-using-ggvis-maps-wshiny/
+[spatial-data-and-ggplot2]: http://spatial.ly/2013/12/introduction-spatial-data-ggplot2/
