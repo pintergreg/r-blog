@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Generate grid</title>
-  <meta name="description" content="$ spatialite bp_districts.splite">
+  <meta name="description" content="I want to generate a 1km × 1km grid over Budapest. The Spatialite tutorial shows  how to create a 10km × 10km grid over Tuscany, but using 1000 as a paramete...">
 
   <link rel="stylesheet" href="/r-blog/css/main.css">
   <link rel="canonical" href="pintergreg.github.io/r-blog/generate-grid">
@@ -62,19 +62,34 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p>$ spatialite bp_districts.splite</p>
+    <p>I want to generate a 1km × 1km grid over Budapest. The <a href="https://www.gaia-gis.it/fossil/libspatialite/wiki?name=tesselations-4.0">Spatialite tutorial</a> shows  how to create a 10km × 10km grid over Tuscany, but using <code class="highlighter-rouge">1000</code> as a parameter Spatilite parsed it as longitude and latitude parameter and I got a single, but enormous one.</p>
 
-<p>spatialite&gt; .loadshp bp_districts budapest CP1252 0 Geometry PRO_COM MULTIPOLYGON 
-.loadshp Budapest_AL6 budapest UTF-8;</p>
+<p>How to create the grid or save it as geoJSON:</p>
 
-<p>spatialite&gt; SELECT ST_SquareGrid(geometry, 1000) FROM budapest;</p>
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">spatialite</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">ST_SquareGrid</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">budapest</span><span class="p">;</span>
 
-<p>select asgeojson (ST_SquareGrid(geometry, 1000)) FROM budapest;</p>
+<span class="n">spatialite</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">asgeojson</span> <span class="p">(</span><span class="n">ST_SquareGrid</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span> <span class="k">FROM</span> <span class="n">budapest</span><span class="p">;</span></code></pre></figure>
 
-<p>http://www.gaia-gis.it/gaia-sins/spatialite-sql-4.2.0.html</p>
+<h1 id="miscellaneous">miscellaneous</h1>
 
-<p>https://www.gaia-gis.it/fossil/libspatialite/wiki?name=tesselations-4.0
-https://www.gaia-gis.it/fossil/libspatialite/wiki?name=tools-4.0</p>
+<p>Creating a new databse:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ spatialite bp_districts.splite
+</code></pre>
+</div>
+<p>Loading shapefile:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>spatialite&gt; .loadshp bp_districts budapest CP1252 0 Geometry PRO_COM MULTIPOLYGON 
+.loadshp Budapest_AL6 budapest UTF-8; 
+</code></pre>
+</div>
+
+<h1 id="references">References</h1>
+
+<ul>
+  <li><a href="https://www.gaia-gis.it/fossil/libspatialite/wiki?name=tesselations-4.0">Tutorial about creating grid</a></li>
+  <li><a href="http://www.gaia-gis.it/gaia-sins/spatialite-sql-4.2.0.html">SQL functions reference list</a></li>
+</ul>
 
 
   </div>
