@@ -6,9 +6,151 @@
 </description>
     <link>pintergreg.github.io/r-blog/</link>
     <atom:link href="pintergreg.github.io/r-blog/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 07 May 2016 11:33:44 +0200</pubDate>
-    <lastBuildDate>Sat, 07 May 2016 11:33:44 +0200</lastBuildDate>
-    <generator>Jekyll v3.1.3</generator>
+    <pubDate>Thu, 19 May 2016 16:00:49 +0200</pubDate>
+    <lastBuildDate>Thu, 19 May 2016 16:00:49 +0200</lastBuildDate>
+    <generator>Jekyll v3.1.5</generator>
+    
+      <item>
+        <title>Aggregate points over polygons by some value</title>
+        <description>&lt;p&gt;&lt;a href=&quot;/r-blog/count-points&quot;&gt;In a post earlier&lt;/a&gt; points over polygons were counted and the polygons were colored according to that count. Next I want to aggregate points by some property value grouped by the polygons.&lt;/p&gt;
+
+&lt;h1 id=&quot;preparations&quot;&gt;Preparations&lt;/h1&gt;
+
+&lt;p&gt;First, read the geoJSON and create some random points over Budapest with random values from 1 to 10, like before.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rgdal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rgeos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ggplot2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# read the geojson file
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;readOGR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;bp_districts.geojson&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;OGRGeoJSON&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# generate random points to the map with some value from 1 to 10
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data.frame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+	&lt;span class=&quot;s2&quot;&gt;&quot;lon&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;runif&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;18.95&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;19.3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+	&lt;span class=&quot;s2&quot;&gt;&quot;lat&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;runif&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;47.35&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;47.6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+	&lt;span class=&quot;s2&quot;&gt;&quot;val&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sample&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;replace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# replace=T means that repeats are allowed
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# create SpatialPointsDataFrame from a data.frame
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;points&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;coordinates&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;points&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lon&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lat&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;subsetting&quot;&gt;Subsetting&lt;/h1&gt;
+
+&lt;p&gt;Then, plot only that points, that are over Budapest. &lt;a href=&quot;http://www.inside-r.org/packages/cran/rgeos/docs/gIntersection&quot;&gt;rgeos::gIntersects&lt;/a&gt; returns a vector with boolean values: &lt;code class=&quot;highlighter-rouge&quot;&gt;TRUE&lt;/code&gt; if in the polygon, &lt;code class=&quot;highlighter-rouge&quot;&gt;FALSE&lt;/code&gt; if not, which is perfect for subsetting.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# using rgeos::gIntersects to subset points only to those that are over Budapest
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;points.over.bp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;points&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gIntersects&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;points&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TRUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;any&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;plot-that-points&quot;&gt;Plot that points!&lt;/h1&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# transform the geoJSON into a data frame so ggplot2 can plot it
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bp.df&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fortify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# plot Budapest&#39;s districts
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ggplot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bp.df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;aes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;long&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;group&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+       &lt;span class=&quot;n&quot;&gt;geom_polygon&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fill&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;white&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# to draw polygons 
+&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;geom_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;black&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# to draw boundaries
+&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# plot points
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;geom_point&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as.data.frame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;points.over.bp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;aes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lon&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;group&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;42&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;red&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# then save to file
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ggsave&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;output.png&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;width&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;height&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;cairo-png&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;result&quot;&gt;Result&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&quot;/r-blog/assets/points_over_bp.png&quot; alt=&quot;The output image&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;match-points-to-districts&quot;&gt;Match points to districts&lt;/h1&gt;
+
+&lt;p&gt;Next step is to determine a point to which district belongs. So, I want a column in the points  &lt;code class=&quot;highlighter-rouge&quot;&gt;data.frame&lt;/code&gt; with the district ids. &lt;a href=&quot;http://www.inside-r.org/packages/cran/sp/docs/aggregate.Spatial&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;sp::over&lt;/code&gt;&lt;/a&gt; can do the first part. The geoJSON I use still contains my own district id (&lt;code class=&quot;highlighter-rouge&quot;&gt;did&lt;/code&gt;) metadata. &lt;a href=&quot;/r-blog/get-administrative-bounderies-from-osm&quot;&gt;See this post&lt;/a&gt;!&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# points has to use the same projection as my geo data from geoJSON
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proj4string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;points&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;proj4string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# match points to districts
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rslt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;over&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;points&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# add the district identifiers to a new column, called `dist` to the original data data.frame
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;dist&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rslt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[,&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Check the data &lt;code class=&quot;highlighter-rouge&quot;&gt;data.frame&lt;/code&gt;!&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The first ten row:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;        lon      lat val dist
+1  19.16696 47.35147   5 &amp;lt;NA&amp;gt;
+2  18.95994 47.36791   2 &amp;lt;NA&amp;gt;
+3  18.95671 47.37090   6 &amp;lt;NA&amp;gt;
+4  19.00049 47.35162   1 &amp;lt;NA&amp;gt;
+5  19.12143 47.56961   6   15
+6  19.25754 47.39402   6 &amp;lt;NA&amp;gt;
+7  19.04310 47.59562   3    3
+8  19.00483 47.43743   3   11
+9  19.18552 47.56312   1 &amp;lt;NA&amp;gt;
+10 19.21871 47.59217   6 &amp;lt;NA&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Some points are in districts some are not, in the latter case the NA value is present.&lt;/p&gt;
+
+&lt;h1 id=&quot;aggregate-the-points-by-the-value&quot;&gt;Aggregate the points by the value&lt;/h1&gt;
+
+&lt;p&gt;Finally, group the points by the districts and sum the values.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;n&quot;&gt;aggregate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;And the output:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   data$dist data$val
+1          1       27
+2         10      110
+3         11      135
+4         12      102
+5         13       60
+6         14      104
+7         15      126
+8         16      104
+9         17      221
+10        18      117
+11        19       25
+12         2      128
+13        20       30
+14        21       57
+15        22      147
+16        23       64
+17         3      155
+18         4       71
+19         5        1
+20         7        7
+21         8       53
+22         9       39
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;N.B.: districts 6 has no points at this time (it is pretty small)&lt;/p&gt;
+
+&lt;h1 id=&quot;references&quot;&gt;References&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://gis.stackexchange.com/questions/63793/how-to-overlay-a-polygon-over-spatialpointsdataframe-and-preserving-the-spdf-dat&quot;&gt;Learned using gIntersects from this&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://stackoverflow.com/questions/34077753/determine-what-geojson-polygon-a-point-is-in&quot;&gt;Learned using sp::over and sp::proj4string from this&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://stackoverflow.com/questions/18799901/data-frame-group-by-column&quot;&gt;Leaned using aggregate from this&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+        <pubDate>Thu, 19 May 2016 11:55:00 +0200</pubDate>
+        <link>pintergreg.github.io/r-blog/aggregate-point-over-polygons</link>
+        <guid isPermaLink="true">pintergreg.github.io/r-blog/aggregate-point-over-polygons</guid>
+        
+        
+        <category>r</category>
+        
+      </item>
     
       <item>
         <title>Useful links about spatial things</title>
@@ -833,151 +975,6 @@ After importing a geoJSON to R it will have a &lt;a href=&quot;http://www.inside
         <category>osm</category>
         
         <category>geojson</category>
-        
-      </item>
-    
-      <item>
-        <title>To be processed</title>
-        <description>&lt;h1 id=&quot;shiny-and-leaflet&quot;&gt;shiny and leaflet&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://shiny.rstudio.com/&lt;/li&gt;
-  &lt;li&gt;https://rstudio.github.io/leaflet/map_widget.html&lt;/li&gt;
-  &lt;li&gt;https://rstudio.github.io/leaflet/&lt;/li&gt;
-  &lt;li&gt;https://rstudio.github.io/leaflet/shiny.html&lt;/li&gt;
-  &lt;li&gt;http://blog.snap.uaf.edu/2015/05/27/climate-projections-by-cities-r-shiny-rcharts-leaflet/&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;kód, ami alapján saját tile servert állítok be (vagy legalábbis próbálok):&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;https://github.com/rstudio/leaflet/blob/3b4d8a38654d58cc86875c882f169d6626944b00/inst/legacy/examples/choropleth/ui.R&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;interactive-mapping-with-r&quot;&gt;interactive mapping with r&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://www.r-bloggers.com/interactive-mapping-with-leaflet-in-r/&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;administrative-bounderies&quot;&gt;administrative bounderies&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;https://help.openstreetmap.org/questions/4036/export-administrative-boundaries-of-a-country-for-use-with-an-external-application&lt;/li&gt;
-  &lt;li&gt;http://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative&lt;/li&gt;
-  &lt;li&gt;http://www.gadm.org/
-    &lt;ul&gt;
-      &lt;li&gt;http://www.gadm.org/download&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;choropleth&quot;&gt;Choropleth&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://bl.ocks.org/mbostock/4060606&lt;/li&gt;
-  &lt;li&gt;http://www.r-bloggers.com/making-static-interactive-maps-with-ggvis-using-ggvis-maps-wshiny/&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;r-and-psql&quot;&gt;r and psql&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://www.r-bloggers.com/getting-started-with-postgresql-in-r/&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;shapes-and-line-types&quot;&gt;shapes and line types&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://www.cookbook-r.com/Graphs/Shapes_and_line_types/&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;pie-diagrams&quot;&gt;pie diagrams&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://www.sthda.com/english/wiki/ggplot2-pie-chart-quick-start-guide-r-software-and-data-visualization&lt;/li&gt;
-  &lt;li&gt;http://stackoverflow.com/questions/8468472/adjusting-position-of-text-labels-in-coord-polar-histogram-in-ggplot2&lt;/li&gt;
-  &lt;li&gt;http://docs.ggplot2.org/current/coord_polar.html&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;pie-diagram-on-map&quot;&gt;pie diagram on map&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://stackoverflow.com/questions/10368180/plotting-pie-graphs-on-map-in-ggplot&lt;/li&gt;
-  &lt;li&gt;http://r.789695.n4.nabble.com/Pie-Chart-in-map-td2318816.html&lt;/li&gt;
-  &lt;li&gt;http://stackoverflow.com/questions/20465070/barplots-on-a-map&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;spatial-data-grid&quot;&gt;spatial data grid&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://gis.stackexchange.com/questions/16374/how-to-create-a-regular-polygon-grid-in-postgis&lt;/li&gt;
-  &lt;li&gt;http://www.dpi.inpe.br/gilberto/tutorials/software/R-contrib/sp/html/SpatialGrid.html
-    &lt;ul&gt;
-      &lt;li&gt;http://www.inside-r.org/packages/cran/sp/docs/as.data.frame.SpatialGrid&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;http://www.gdal.org/gdal2tiles.html&lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;http://gis.stackexchange.com/questions/43707/how-to-produce-spatial-grid-from-raster&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;http://download.bbbike.org/osm/bbbike/Budapest/
-    &lt;ul&gt;
-      &lt;li&gt;budapest&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;https://www.gaia-gis.it/fossil/libspatialite/wiki?name=tesselations-4.0
-    &lt;ul&gt;
-      &lt;li&gt;itt van worl boundaries data&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;https://geospatial.commons.gc.cuny.edu/2013/11/25/hexbinning/&lt;/li&gt;
-  &lt;li&gt;http://www.gaia-gis.it/gaia-sins/spatialite-tutorial-2.3.1.html&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;multiple-graphs-on-one-page&quot;&gt;multiple graphs on one page&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_%28ggplot2%29/&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;geombar&quot;&gt;geom_bar&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://docs.ggplot2.org/0.9.3.1/geom_bar.html&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;d-plot&quot;&gt;3d plot&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://stackoverflow.com/questions/30563340/how-to-make-3d-histogram-in-r&lt;/li&gt;
-  &lt;li&gt;http://www.r-bloggers.com/3d-plots-with-ggplot2-and-plotly/&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;heat-map&quot;&gt;heat map&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://www.geo.ut.ee/aasa/LOOM02331/heatmap_in_R.html&lt;/li&gt;
-  &lt;li&gt;https://learnr.wordpress.com/2010/01/26/ggplot2-quick-heatmap-plotting/&lt;/li&gt;
-  &lt;li&gt;http://datascienceplus.com/building-heatmaps-in-r/&lt;/li&gt;
-  &lt;li&gt;http://docs.ggplot2.org/current/geom_tile.html&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;data-visualization&quot;&gt;data visualization&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;http://www.analyticsvidhya.com/blog/2015/07/guide-data-visualization-r/&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-        <pubDate>Sun, 03 Apr 2016 16:16:00 +0200</pubDate>
-        <link>pintergreg.github.io/r-blog/topics-to-be-processed</link>
-        <guid isPermaLink="true">pintergreg.github.io/r-blog/topics-to-be-processed</guid>
-        
-        
-        <category>r</category>
-        
-        <category>shiny</category>
-        
-        <category>leaflet</category>
         
       </item>
     
