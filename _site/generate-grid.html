@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Generate grid</title>
+  <title>Generate grid (updated)</title>
   <meta name="description" content="I want to generate a 1km × 1km grid over Budapest. The Spatialite tutorial shows  how to create a 10km × 10km grid over Tuscany, but using 1000 as a paramete...">
 
   <link rel="stylesheet" href="/r-blog/css/main.css">
@@ -57,7 +57,7 @@
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">Generate grid</h1>
+    <h1 class="post-title" itemprop="name headline">Generate grid (updated)</h1>
     <p class="post-meta"><time datetime="2016-04-24T17:08:00+02:00" itemprop="datePublished">Apr 24, 2016</time></p>
   </header>
 
@@ -69,6 +69,16 @@
 <figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">spatialite</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">ST_SquareGrid</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">budapest</span><span class="p">;</span>
 
 <span class="n">spatialite</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">asgeojson</span> <span class="p">(</span><span class="n">ST_SquareGrid</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span> <span class="k">FROM</span> <span class="n">budapest</span><span class="p">;</span></code></pre></figure>
+
+<p>So, I used the value 0.01, because <a href="https://en.wikipedia.org/wiki/Decimal_degrees">Wiki says</a> it is about 1.11km (at the equator).</p>
+
+<h1 id="geojson-with-spatialite-gui">GeoJSON with Spatialite GUI</h1>
+
+<p>After loading Budapest geodata into Spatialite (<strong>TODO</strong>: write about it), I ran a query to generate a <code class="highlighter-rouge">0.02 x 0.02</code> grid. The BLOB explorer shows that it is nicely generated.</p>
+
+<p><img src="/r-blog/assets/spatialite_gui_grid.jpg" alt="The output image" /></p>
+
+<p>The only problem was its geometry type, which is <code class="highlighter-rouge">multipolygon</code>. I would need a <code class="highlighter-rouge">feature collection</code> type geoJSON. As I did not found quickly a way to generate a proper geoJSON I wrote a simple <a href="/r-blog/assets/convert_geojson.rb">Ruby script</a> to convert the geoJSON to a better format.</p>
 
 <h1 id="miscellaneous">miscellaneous</h1>
 
@@ -89,6 +99,11 @@
 <ul>
   <li><a href="https://www.gaia-gis.it/fossil/libspatialite/wiki?name=tesselations-4.0">Tutorial about creating grid</a></li>
   <li><a href="http://www.gaia-gis.it/gaia-sins/spatialite-sql-4.2.0.html">SQL functions reference list</a></li>
+</ul>
+
+<ul>
+  <li><a href="http://www.macwright.org/2015/03/23/geojson-second-bite.html">More than you ever wanted to know about GeoJSON</a></li>
+  <li><a href="http://terraformer.io/glossary/">Terraformer glossary</a></li>
 </ul>
 
 
