@@ -10,8 +10,8 @@
   <meta name="description" content="After creating choropleth from the population, now I wanted to color the polygons (now distrits) according to the number of the spatial points over them.">
 
   <link rel="stylesheet" href="/r-blog/css/main.css">
-  <link rel="canonical" href="pintergreg.github.io/r-blog/count-points">
-  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="pintergreg.github.io/r-blog/feed.xml">
+  <link rel="canonical" href="http://localhost:4000/r-blog/count-points">
+  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="http://localhost:4000/r-blog/feed.xml">
 </head>
 
 
@@ -66,61 +66,61 @@
 
 <p>First I generated some (500) random points over Budapest with some random values (but this was not used at this time).</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">data</span> <span class="o">&lt;-</span> <span class="n">data.frame</span><span class="p">(</span>
-	<span class="s2">"lon"</span> <span class="o">=</span> <span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span> <span class="m">18.95</span><span class="p">,</span> <span class="m">19.3</span><span class="p">),</span>
-	<span class="s2">"lat"</span> <span class="o">=</span> <span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span> <span class="m">47.35</span><span class="p">,</span> <span class="m">47.6</span><span class="p">),</span>
-	<span class="s2">"val"</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span> <span class="m">500</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">T</span><span class="p">)</span> <span class="c1"># replace=T means that repeats are allowed
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="w">
+	</span><span class="s2">"lon"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span><span class="w"> </span><span class="m">18.95</span><span class="p">,</span><span class="w"> </span><span class="m">19.3</span><span class="p">),</span><span class="w">
+	</span><span class="s2">"lat"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span><span class="w"> </span><span class="m">47.35</span><span class="p">,</span><span class="w"> </span><span class="m">47.6</span><span class="p">),</span><span class="w">
+	</span><span class="s2">"val"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">500</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="o">=</span><span class="nb">T</span><span class="p">)</span><span class="w"> </span><span class="c1"># replace=T means that repeats are allowed
 </span><span class="p">)</span></code></pre></figure>
 
 <p>The I had to convert this <code class="highlighter-rouge">data.frame</code> into a SpatialPointsDataFrame obejct.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">points</span> <span class="o">&lt;-</span> <span class="n">data</span>
-<span class="n">coordinates</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="o">~</span><span class="n">lon</span><span class="o">+</span><span class="n">lat</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">points</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data</span><span class="w">
+</span><span class="n">coordinates</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="o">~</span><span class="n">lon</span><span class="o">+</span><span class="n">lat</span></code></pre></figure>
 
 <p>For the counting I used the <code class="highlighter-rouge">poly.counts</code> function of the <a href="https://cran.r-project.org/web/packages/GISTools/">GISTools package</a>. And added counts to the data slot of the read dataset with the name <code class="highlighter-rouge">counts</code> and made the choropleth.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">bp</span><span class="o">@</span><span class="n">data</span><span class="p">[</span><span class="s1">'counts'</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="n">poly.counts</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">bp</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">bp</span><span class="o">@</span><span class="n">data</span><span class="p">[</span><span class="s1">'counts'</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">poly.counts</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">bp</span><span class="p">)</span></code></pre></figure>
 
 <h1 id="full-code">Full code</h1>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">rgdal</span><span class="p">)</span>
-<span class="n">library</span><span class="p">(</span><span class="n">rgeos</span><span class="p">)</span>
-<span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
-<span class="n">library</span><span class="p">(</span><span class="n">plyr</span><span class="p">)</span>
-<span class="n">library</span><span class="p">(</span><span class="n">GISTools</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">rgdal</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">rgeos</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">plyr</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">GISTools</span><span class="p">)</span><span class="w">
 
-<span class="c1"># read the geojson file
-</span><span class="n">bp</span> <span class="o">&lt;-</span> <span class="n">readOGR</span><span class="p">(</span><span class="s2">"bp_districts.geojson"</span><span class="p">,</span> <span class="s2">"OGRGeoJSON"</span><span class="p">)</span>
+</span><span class="c1"># read the geojson file
+</span><span class="n">bp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">readOGR</span><span class="p">(</span><span class="s2">"bp_districts.geojson"</span><span class="p">,</span><span class="w"> </span><span class="s2">"OGRGeoJSON"</span><span class="p">)</span><span class="w">
 
-<span class="c1"># generate random points to the map with some value from 1 to 10
-</span><span class="n">data</span> <span class="o">&lt;-</span> <span class="n">data.frame</span><span class="p">(</span>
-	<span class="s2">"lon"</span> <span class="o">=</span> <span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span> <span class="m">18.95</span><span class="p">,</span> <span class="m">19.3</span><span class="p">),</span>
-	<span class="s2">"lat"</span> <span class="o">=</span> <span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span> <span class="m">47.35</span><span class="p">,</span> <span class="m">47.6</span><span class="p">),</span>
-	<span class="s2">"val"</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span> <span class="m">500</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">T</span><span class="p">)</span> <span class="c1"># replace=T means that repeats are allowed
-</span><span class="p">)</span>
+</span><span class="c1"># generate random points to the map with some value from 1 to 10
+</span><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="w">
+	</span><span class="s2">"lon"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span><span class="w"> </span><span class="m">18.95</span><span class="p">,</span><span class="w"> </span><span class="m">19.3</span><span class="p">),</span><span class="w">
+	</span><span class="s2">"lat"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span><span class="w"> </span><span class="m">47.35</span><span class="p">,</span><span class="w"> </span><span class="m">47.6</span><span class="p">),</span><span class="w">
+	</span><span class="s2">"val"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">500</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="o">=</span><span class="nb">T</span><span class="p">)</span><span class="w"> </span><span class="c1"># replace=T means that repeats are allowed
+</span><span class="p">)</span><span class="w">
 
-<span class="c1"># create SpatialPointsDataFrame from a data.frame
-</span><span class="n">points</span> <span class="o">&lt;-</span> <span class="n">data</span>
-<span class="n">coordinates</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="o">~</span><span class="n">lon</span><span class="o">+</span><span class="n">lat</span>
+</span><span class="c1"># create SpatialPointsDataFrame from a data.frame
+</span><span class="n">points</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data</span><span class="w">
+</span><span class="n">coordinates</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="o">~</span><span class="n">lon</span><span class="o">+</span><span class="n">lat</span><span class="w">
 
-<span class="c1"># counts the number of the points in each polygon (from GISTools package) and add to the dataset
-</span><span class="n">bp</span><span class="o">@</span><span class="n">data</span><span class="p">[</span><span class="s1">'counts'</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="n">poly.counts</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">bp</span><span class="p">)</span>
+</span><span class="c1"># counts the number of the points in each polygon (from GISTools package) and add to the dataset
+</span><span class="n">bp</span><span class="o">@</span><span class="n">data</span><span class="p">[</span><span class="s1">'counts'</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">poly.counts</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">bp</span><span class="p">)</span><span class="w">
 
-<span class="c1"># fortify with keeping metadata
-</span><span class="n">bp</span><span class="o">@</span><span class="n">data</span><span class="o">$</span><span class="n">id</span> <span class="o">&lt;-</span> <span class="n">rownames</span><span class="p">(</span><span class="n">bp</span><span class="o">@</span><span class="n">data</span><span class="p">)</span>
-<span class="n">bp.df</span>     <span class="o">&lt;-</span> <span class="n">fortify</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span>
-<span class="n">bp.df</span>     <span class="o">&lt;-</span> <span class="n">join</span><span class="p">(</span><span class="n">bp.df</span><span class="p">,</span> <span class="n">bp</span><span class="o">@</span><span class="n">data</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">"id"</span><span class="p">)</span>
+</span><span class="c1"># fortify with keeping metadata
+</span><span class="n">bp</span><span class="o">@</span><span class="n">data</span><span class="o">$</span><span class="n">id</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rownames</span><span class="p">(</span><span class="n">bp</span><span class="o">@</span><span class="n">data</span><span class="p">)</span><span class="w">
+</span><span class="n">bp.df</span><span class="w">     </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">fortify</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span><span class="w">
+</span><span class="n">bp.df</span><span class="w">     </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">join</span><span class="p">(</span><span class="n">bp.df</span><span class="p">,</span><span class="w"> </span><span class="n">bp</span><span class="o">@</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"id"</span><span class="p">)</span><span class="w">
 
-<span class="c1"># plot it
-</span><span class="n">plot</span> <span class="o">=</span> <span class="n">ggplot</span><span class="p">(</span><span class="n">bp.df</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
-       <span class="n">geom_polygon</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="n">counts</span><span class="p">))</span> <span class="o">+</span> <span class="c1"># to draw polygons 
-</span>       <span class="n">geom_path</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span> <span class="c1"># to draw boundaries
-</span>
-<span class="c1"># as grouping is used for the geojson plotting, group parameter is necessary for points plotting as well
-</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span> <span class="o">+</span> <span class="n">geom_point</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">lon</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">lat</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="m">42</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+</span><span class="c1"># plot it
+</span><span class="n">plot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">bp.df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+       </span><span class="n">geom_polygon</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="n">counts</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="c1"># to draw polygons 
+</span><span class="w">       </span><span class="n">geom_path</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span><span class="w"> </span><span class="c1"># to draw boundaries
+</span><span class="w">
+</span><span class="c1"># as grouping is used for the geojson plotting, group parameter is necessary for points plotting as well
+</span><span class="n">plot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">geom_point</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lon</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">42</span><span class="p">),</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span><span class="w">
 
-<span class="c1"># then save to file
-</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">"output4.png"</span><span class="p">,</span>  <span class="n">width</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="m">7</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
+</span><span class="c1"># then save to file
+</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"output4.png"</span><span class="p">,</span><span class="w">  </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
 
 <h1 id="result">Result</h1>
 
