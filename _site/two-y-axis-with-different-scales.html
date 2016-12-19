@@ -10,8 +10,8 @@
   <meta name="description" content="It is said that generally it’s not a good idea to create a plot with two y axis but with different scales1. So ggplot2 does not really support it basicly, th...">
 
   <link rel="stylesheet" href="/r-blog/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/r-blog/two-y-axis-with-different-scales">
-  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="http://localhost:4000/r-blog/feed.xml">
+  <link rel="canonical" href="pintergreg.github.io/r-blog/two-y-axis-with-different-scales">
+  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="pintergreg.github.io/r-blog/feed.xml">
 </head>
 
 
@@ -65,45 +65,45 @@
     <p>It is said that generally it’s not a good idea to create a plot with two y axis but with different scales<sup><a href="#ref1">1</a></sup>. So ggplot2 does not really support it basicly, there is only a hackish way to achieve it<sup><a href="#ref2">2</a></sup>. But as the <code class="highlighter-rouge">grid</code> package was not available (for R version 3.2.3), I tried something else.</p>
 
 <figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># first, generate some data
-</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="n">from</span><span class="o">=</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">to</span><span class="o">=</span><span class="m">7</span><span class="p">)</span><span class="w">
-</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">58</span><span class="p">,</span><span class="w"> </span><span class="m">42</span><span class="p">,</span><span class="w"> </span><span class="m">61</span><span class="p">,</span><span class="w"> </span><span class="m">47</span><span class="p">,</span><span class="w"> </span><span class="m">32</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w">
-</span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">38</span><span class="p">,</span><span class="w"> </span><span class="m">28</span><span class="p">,</span><span class="w"> </span><span class="m">54</span><span class="p">,</span><span class="w"> </span><span class="m">51</span><span class="p">,</span><span class="w"> </span><span class="m">35</span><span class="p">,</span><span class="w"> </span><span class="m">63</span><span class="p">,</span><span class="w"> </span><span class="m">57</span><span class="p">)</span><span class="w">
-</span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="w">
-    </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w">
-    </span><span class="n">y</span><span class="m">1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w">
-    </span><span class="n">y</span><span class="m">2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="w">
-</span><span class="p">)</span><span class="w">
-</span><span class="c1"># define the file to save (it has to be done before plotting)
-</span><span class="n">png</span><span class="p">(</span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"output_f.png"</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cairo"</span><span class="p">)</span><span class="w">
+</span><span class="n">x</span> <span class="o">=</span> <span class="n">seq</span><span class="p">(</span><span class="n">from</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="m">7</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="m">58</span><span class="p">,</span> <span class="m">42</span><span class="p">,</span> <span class="m">61</span><span class="p">,</span> <span class="m">47</span><span class="p">,</span> <span class="m">32</span><span class="p">,</span> <span class="m">12</span><span class="p">,</span> <span class="m">20</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="m">38</span><span class="p">,</span> <span class="m">28</span><span class="p">,</span> <span class="m">54</span><span class="p">,</span> <span class="m">51</span><span class="p">,</span> <span class="m">35</span><span class="p">,</span> <span class="m">63</span><span class="p">,</span> <span class="m">57</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">&lt;-</span> <span class="n">data.frame</span><span class="p">(</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="n">b</span>
+<span class="p">)</span>
+<span class="c1"># define the file to save (it has to be done before plotting)
+</span><span class="n">png</span><span class="p">(</span><span class="n">file</span> <span class="o">=</span> <span class="s2">"output_f.png"</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s2">"cairo"</span><span class="p">)</span>
 
-</span><span class="c1"># create the first plot with line type, color deepskyblue4, scale 0..100 and some axis labels
-</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="o">$</span><span class="n">y</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s2">"l"</span><span class="p">,</span><span class="w">
-	</span><span class="n">col</span><span class="o">=</span><span class="s2">"deepskyblue4"</span><span class="p">,</span><span class="w">
-	</span><span class="n">xlab</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s2">"a"</span><span class="p">,</span><span class="w">
-	</span><span class="n">ylim</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">)</span><span class="w">
-</span><span class="p">)</span><span class="w">
+<span class="c1"># create the first plot with line type, color deepskyblue4, scale 0..100 and some axis labels
+</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="o">$</span><span class="n">y1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s2">"l"</span><span class="p">,</span>
+	<span class="n">col</span><span class="o">=</span><span class="s2">"deepskyblue4"</span><span class="p">,</span>
+	<span class="n">xlab</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span> <span class="n">ylab</span><span class="o">=</span><span class="s2">"a"</span><span class="p">,</span>
+	<span class="n">ylim</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">)</span>
+<span class="p">)</span>
 
-</span><span class="c1"># unites the plots 
-</span><span class="n">par</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+<span class="c1"># unites the plots 
+</span><span class="n">par</span><span class="p">(</span><span class="n">new</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
          
-</span><span class="c1"># create the second plot with line type, color firebrick and scale 20..70
+<span class="c1"># create the second plot with line type, color firebrick and scale 20..70
 # axis labels are empty, because they would be overlapped with the first ones
 # that would also happen with the axis ticks so xaxt and yaxt paramters are needed
-</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="o">$</span><span class="n">y</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s2">"l"</span><span class="p">,</span><span class="w">
-	</span><span class="n">col</span><span class="o">=</span><span class="s2">"firebrick"</span><span class="p">,</span><span class="w">
-	</span><span class="n">xaxt</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span><span class="w"> </span><span class="n">yaxt</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span><span class="w">
-	</span><span class="n">xlab</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span><span class="w">
-	</span><span class="n">ylim</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="w"> </span><span class="m">70</span><span class="p">)</span><span class="w">
-</span><span class="p">)</span><span class="w">
+</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="o">$</span><span class="n">y2</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s2">"l"</span><span class="p">,</span>
+	<span class="n">col</span><span class="o">=</span><span class="s2">"firebrick"</span><span class="p">,</span>
+	<span class="n">xaxt</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span> <span class="n">yaxt</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span>
+	<span class="n">xlab</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">ylab</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+	<span class="n">ylim</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="m">20</span><span class="p">,</span> <span class="m">70</span><span class="p">)</span>
+<span class="p">)</span>
    
-</span><span class="c1"># makes the scales of the second plot visible
-</span><span class="n">axis</span><span class="p">(</span><span class="m">4</span><span class="p">)</span><span class="w">
+<span class="c1"># makes the scales of the second plot visible
+</span><span class="n">axis</span><span class="p">(</span><span class="m">4</span><span class="p">)</span>
 
-</span><span class="c1"># add title to the plot
-</span><span class="n">title</span><span class="p">(</span><span class="n">main</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"the title"</span><span class="p">)</span><span class="w">
+<span class="c1"># add title to the plot
+</span><span class="n">title</span><span class="p">(</span><span class="n">main</span> <span class="o">=</span> <span class="s2">"the title"</span><span class="p">)</span>
 
-</span><span class="c1"># add legend to the plot
-</span><span class="n">legend</span><span class="p">(</span><span class="s2">"topleft"</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"deepskyblue4"</span><span class="p">,</span><span class="s2">"firebrick"</span><span class="p">),</span><span class="w"> </span><span class="n">bty</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="o">=</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">legend</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span><span class="w"> </span><span class="s2">"b"</span><span class="p">))</span></code></pre></figure>
+<span class="c1"># add legend to the plot
+</span><span class="n">legend</span><span class="p">(</span><span class="s2">"topleft"</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="s2">"deepskyblue4"</span><span class="p">,</span><span class="s2">"firebrick"</span><span class="p">),</span> <span class="n">bty</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span> <span class="n">lty</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">))</span></code></pre></figure>
 
 <h1 id="result">Result</h1>
 

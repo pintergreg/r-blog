@@ -10,8 +10,8 @@
   <meta name="description" content="A previous post tells how I got the districts of Budapest in geoJSON format, but can be also found directly here.">
 
   <link rel="stylesheet" href="/r-blog/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/r-blog/plot-geojson">
-  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="http://localhost:4000/r-blog/feed.xml">
+  <link rel="canonical" href="pintergreg.github.io/r-blog/plot-geojson">
+  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="pintergreg.github.io/r-blog/feed.xml">
 </head>
 
 
@@ -66,20 +66,20 @@
 
 <h1 id="r-code-to-plot-geojson">R code to plot geoJSON</h1>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">rgdal</span><span class="p">)</span><span class="w">
-</span><span class="n">library</span><span class="p">(</span><span class="n">rgeos</span><span class="p">)</span><span class="w">
-</span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">rgdal</span><span class="p">)</span>
+<span class="n">library</span><span class="p">(</span><span class="n">rgeos</span><span class="p">)</span>
+<span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
  
-</span><span class="c1"># read the geojson file
-</span><span class="n">bp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">readOGR</span><span class="p">(</span><span class="s2">"bp_districts.geojson"</span><span class="p">,</span><span class="w"> </span><span class="s2">"OGRGeoJSON"</span><span class="p">)</span><span class="w">
+<span class="c1"># read the geojson file
+</span><span class="n">bp</span> <span class="o">&lt;-</span> <span class="n">readOGR</span><span class="p">(</span><span class="s2">"bp_districts.geojson"</span><span class="p">,</span> <span class="s2">"OGRGeoJSON"</span><span class="p">)</span>
 
-</span><span class="c1"># turn the map into a data frame so ggplot2 can plot it
-</span><span class="n">bp_map</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">fortify</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span><span class="w">
-</span><span class="c1"># plot it
-</span><span class="n">plot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">bp_map</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">map_id</span><span class="o">=</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">geom_map</span><span class="p">(</span><span class="n">map</span><span class="o">=</span><span class="n">bp_map</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="o">=</span><span class="s2">"white"</span><span class="p">)</span><span class="w">
+<span class="c1"># turn the map into a data frame so ggplot2 can plot it
+</span><span class="n">bp_map</span> <span class="o">&lt;-</span> <span class="n">fortify</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span>
+<span class="c1"># plot it
+</span><span class="n">plot</span> <span class="o">=</span> <span class="n">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">bp_map</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">map_id</span><span class="o">=</span><span class="n">id</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">))</span> <span class="o">+</span> <span class="n">geom_map</span><span class="p">(</span><span class="n">map</span><span class="o">=</span><span class="n">bp_map</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">"white"</span><span class="p">)</span>
 
-</span><span class="c1"># then save to file
-</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"output.png"</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
+<span class="c1"># then save to file
+</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">"output.png"</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
 
 <h1 id="result">Result</h1>
 

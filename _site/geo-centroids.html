@@ -10,8 +10,8 @@
   <meta name="description" content="Let’s calculate the center points of some polygon, namely the centroids of the districts of Budapest. This is a pretty easy task with the gCentroid function ...">
 
   <link rel="stylesheet" href="/r-blog/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/r-blog/geo-centroids">
-  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="http://localhost:4000/r-blog/feed.xml">
+  <link rel="canonical" href="pintergreg.github.io/r-blog/geo-centroids">
+  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="pintergreg.github.io/r-blog/feed.xml">
 </head>
 
 
@@ -64,27 +64,27 @@
   <div class="post-content" itemprop="articleBody">
     <p>Let’s calculate the center points of some polygon, namely the centroids of the districts of Budapest. This is a pretty easy task with the <code class="highlighter-rouge">gCentroid</code> function fo the <code class="highlighter-rouge">rgeos</code> package. The used GeoJSON is <a href="/r-blog/assets/bp_districts.geojson">the same</a>.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">rgdal</span><span class="p">)</span><span class="w">
-</span><span class="n">library</span><span class="p">(</span><span class="n">rgeos</span><span class="p">)</span><span class="w">
-</span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">rgdal</span><span class="p">)</span>
+<span class="n">library</span><span class="p">(</span><span class="n">rgeos</span><span class="p">)</span>
+<span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
 
-</span><span class="c1"># read the geojson file
-</span><span class="n">bp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">readOGR</span><span class="p">(</span><span class="s2">"bp_districts.geojson"</span><span class="p">,</span><span class="w"> </span><span class="s2">"OGRGeoJSON"</span><span class="p">)</span><span class="w">
+<span class="c1"># read the geojson file
+</span><span class="n">bp</span> <span class="o">&lt;-</span> <span class="n">readOGR</span><span class="p">(</span><span class="s2">"bp_districts.geojson"</span><span class="p">,</span> <span class="s2">"OGRGeoJSON"</span><span class="p">)</span>
 
-</span><span class="c1"># calculate the center points of the polygons (districts)
-</span><span class="n">centroids</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gCentroid</span><span class="p">(</span><span class="n">bp</span><span class="p">,</span><span class="w"> </span><span class="n">byid</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+<span class="c1"># calculate the center points of the polygons (districts)
+</span><span class="n">centroids</span> <span class="o">=</span> <span class="n">gCentroid</span><span class="p">(</span><span class="n">bp</span><span class="p">,</span> <span class="n">byid</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
 
-</span><span class="c1"># turn the map into a data frame so ggplot2 can plot it
-</span><span class="n">bp.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">fortify</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span><span class="w">
+<span class="c1"># turn the map into a data frame so ggplot2 can plot it
+</span><span class="n">bp.df</span> <span class="o">&lt;-</span> <span class="n">fortify</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span>
 
-</span><span class="c1"># plot it
-</span><span class="n">plot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">bp.df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
-       </span><span class="n">geom_polygon</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"white"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="c1"># to draw polygons
-</span><span class="w">       </span><span class="n">geom_path</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="c1"># to draw boundaries
-</span><span class="w">       </span><span class="n">geom_point</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as.data.frame</span><span class="p">(</span><span class="n">centroids</span><span class="p">),</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">42</span><span class="p">),</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span><span class="w"> </span><span class="c1"># draw center points
-</span><span class="w">
-</span><span class="c1"># then save to file
-</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"output.png"</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
+<span class="c1"># plot it
+</span><span class="n">plot</span> <span class="o">=</span> <span class="n">ggplot</span><span class="p">(</span><span class="n">bp.df</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
+       <span class="n">geom_polygon</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"white"</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># to draw polygons
+</span>       <span class="n">geom_path</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># to draw boundaries
+</span>       <span class="n">geom_point</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">as.data.frame</span><span class="p">(</span><span class="n">centroids</span><span class="p">),</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="m">42</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span> <span class="c1"># draw center points
+</span>
+<span class="c1"># then save to file
+</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">"output.png"</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
 
 <h1 id="result">Result</h1>
 

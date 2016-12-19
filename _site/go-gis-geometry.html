@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>GIS in Golang (part 1?)</title>
+  <meta name="description" content="GIS in Golang (part 1?)">
+
+  <link rel="stylesheet" href="/r-blog/css/main.css">
+  <link rel="canonical" href="pintergreg.github.io/r-blog/go-gis-geometry">
+  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="pintergreg.github.io/r-blog/feed.xml">
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/r-blog/">My little R knowledgebase</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/r-blog/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">GIS in Golang (part 1?)</h1>
+    <p class="post-meta"><time datetime="2016-12-19T09:00:00+01:00" itemprop="datePublished">Dec 19, 2016</time></p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <h1 id="gis-in-golang-part-1">GIS in Golang (part 1?)</h1>
+
+<p>There are some GIS related package in Go, <a href="https://github.com/golang/go/wiki/Projects#gis">listed in GitHub</a> among other useful Go packages.</p>
+
+<p>For now, I only needed the some geometry handling, which is provided by the <a href="https://github.com/paulsmith/gogeos">gogeos</a> package. It can work with Well-known text format.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Well-known_text">From Wiki</a>: “Well-known text (WKT) is a text markup language for representing vector geometry objects on a map, spatial reference systems of spatial objects and transformations between spatial reference systems.”</p>
+
+<h2 id="wkt-examples-from-wiki">WKT examples from Wiki</h2>
+
+<ul>
+  <li>to define a point: <code class="highlighter-rouge">POINT (30 10)</code> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/SFA_Point.svg/51px-SFA_Point.svg.png" alt="Point in WKT, image is from Wikipedia" /></li>
+  <li>to define a polygon: <code class="highlighter-rouge">POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))</code> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/SFA_Polygon.svg/51px-SFA_Polygon.svg.png" alt="Polygon in WKT, image is from Wikipedia" /></li>
+</ul>
+
+<h2 id="define-some-test-data">define some test data</h2>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>POINT (1 1)
+POINT (1.5 2)
+POINT (2.5 1)
+POLYGON ((0 0, 0 2, 2 2, 2 0, 0 0))
+</code></pre>
+</div>
+
+<p><img src="/r-blog/assets/go_gis/go_gis_v2.svg" alt="Test data" /></p>
+
+<h3 id="usage-in-gogeos">usage in <code class="highlighter-rouge">gogeos</code></h3>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">var</span><span class="x"> </span><span class="n">p1</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POINT (1 1)"</span><span class="p">))</span><span class="x">
+</span><span class="k">var</span><span class="x"> </span><span class="n">p2</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POINT (1.5 2)"</span><span class="p">))</span><span class="x">
+</span><span class="k">var</span><span class="x"> </span><span class="n">p3</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POINT (2.5 1)"</span><span class="p">))</span><span class="x">
+</span><span class="k">var</span><span class="x"> </span><span class="n">poly</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POLYGON ((0 0, 0 2, 2 2, 2 0, 0 0))"</span><span class="p">))</span><span class="x">
+</span></code></pre>
+</div>
+
+<h3 id="point---polygon-intersection-checking">point - polygon intersection checking</h3>
+
+<p>Geometries has an <code class="highlighter-rouge">Intersencts</code> method that returns a <code class="highlighter-rouge">bool</code> and an <em>error</em> value.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">var</span><span class="x"> </span><span class="n">b</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">poly</span><span class="o">.</span><span class="n">Intersects</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span><span class="x">
+</span></code></pre>
+</div>
+
+<h2 id="full-code">Full code</h2>
+
+<p>As the <code class="highlighter-rouge">Intersencts</code> method returns two value I used the <a href="https://golang.org/pkg/text/template/#Must">Must template</a> for “error checking” that returns the boolean value if no error is happened. N.B. <code class="highlighter-rouge">geos</code> has its own for Geometry parsing from WKT.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+
+</span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
+	</span><span class="s">"fmt"</span><span class="x">
+
+	</span><span class="s">"github.com/paulsmith/gogeos/geos"</span><span class="x">
+</span><span class="p">)</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">main</span><span class="p">()</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="k">var</span><span class="x"> </span><span class="n">p1</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POINT (1 1)"</span><span class="p">))</span><span class="x">
+	</span><span class="k">var</span><span class="x"> </span><span class="n">p2</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POINT (1.5 2)"</span><span class="p">))</span><span class="x">
+	</span><span class="k">var</span><span class="x"> </span><span class="n">p3</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POINT (2.5 1)"</span><span class="p">))</span><span class="x">
+	</span><span class="k">var</span><span class="x"> </span><span class="n">poly</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POLYGON ((0 0, 0 2, 2 2, 2 0, 0 0))"</span><span class="p">))</span><span class="x">
+
+	</span><span class="k">var</span><span class="x"> </span><span class="n">r</span><span class="p">,</span><span class="x"> </span><span class="n">_</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">poly</span><span class="o">.</span><span class="n">Intersects</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span><span class="x">
+	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="x">
+
+	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">Must</span><span class="p">(</span><span class="n">poly</span><span class="o">.</span><span class="n">Intersects</span><span class="p">(</span><span class="n">p1</span><span class="p">)))</span><span class="x">
+	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">Must</span><span class="p">(</span><span class="n">poly</span><span class="o">.</span><span class="n">Intersects</span><span class="p">(</span><span class="n">p2</span><span class="p">)))</span><span class="x">
+	</span><span class="n">fmt</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">Must</span><span class="p">(</span><span class="n">poly</span><span class="o">.</span><span class="n">Intersects</span><span class="p">(</span><span class="n">p3</span><span class="p">)))</span><span class="x">
+</span><span class="p">}</span><span class="x">
+
+</span><span class="k">func</span><span class="x"> </span><span class="n">Must</span><span class="p">(</span><span class="n">i</span><span class="x"> </span><span class="kt">bool</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="kt">error</span><span class="p">)</span><span class="x"> </span><span class="kt">bool</span><span class="x"> </span><span class="p">{</span><span class="x">
+	</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+		</span><span class="nb">panic</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="x">
+	</span><span class="p">}</span><span class="x">
+	</span><span class="k">return</span><span class="x"> </span><span class="n">i</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span></code></pre>
+</div>
+
+<h2 id="miscellaneous">Miscellaneous</h2>
+
+<ul>
+  <li><a href="https://github.com/llgcode/draw2d">Low-level 2D drawing library in Go</a>
+    <ul>
+      <li><a href="https://github.com/gonum/plot">Plotting library based on it</a></li>
+    </ul>
+  </li>
+  <li><a href="https://github.com/kpawlik/geojson">Go package to easy and quick create datastructure which can be serialized to geojson format</a></li>
+  <li><a href="https://github.com/Ganners/gis-polygon">Implements a Polygon type, which contains a slice of Lat/Lng points and some useful utilities to operate on that data.</a>
+    <ul>
+      <li>seems not so full solution</li>
+    </ul>
+  </li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">My little R knowledgebase</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>My little R knowledgebase</li>
+          <li><a href="mailto:"></a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/pintergreg"><span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">pintergreg</span></a>
+
+          </li>
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>My "Today I Learned" posts mainly about R.
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

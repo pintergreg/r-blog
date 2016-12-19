@@ -10,8 +10,8 @@
   <meta name="description" content="In a post earlier, I used a GeoJSON of the districts of Budapest for creating choropleth. Now, I use a voronoi diagram for choropleth.">
 
   <link rel="stylesheet" href="/r-blog/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/r-blog/voronoi-choropleth">
-  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="http://localhost:4000/r-blog/feed.xml">
+  <link rel="canonical" href="pintergreg.github.io/r-blog/voronoi-choropleth">
+  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="pintergreg.github.io/r-blog/feed.xml">
 </head>
 
 
@@ -66,45 +66,45 @@
 
 <p>First I generated some (100) random points over Budapest with some random values and every point got an id.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="w">
-	</span><span class="s2">"id"</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">100</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"lon"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="m">18.95</span><span class="p">,</span><span class="w"> </span><span class="m">19.3</span><span class="p">),</span><span class="w">
-	</span><span class="s2">"lat"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="m">47.35</span><span class="p">,</span><span class="w"> </span><span class="m">47.6</span><span class="p">),</span><span class="w">
-	</span><span class="s2">"val"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="o">=</span><span class="nb">T</span><span class="p">)</span><span class="w"> </span><span class="c1"># replace=T means that repeats are allowed
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">data</span> <span class="o">&lt;-</span> <span class="n">data.frame</span><span class="p">(</span>
+	<span class="s2">"id"</span>  <span class="o">=</span> <span class="m">1</span><span class="o">:</span><span class="m">100</span><span class="p">,</span>
+	<span class="s2">"lon"</span> <span class="o">=</span> <span class="n">runif</span><span class="p">(</span><span class="m">100</span><span class="p">,</span> <span class="m">18.95</span><span class="p">,</span> <span class="m">19.3</span><span class="p">),</span>
+	<span class="s2">"lat"</span> <span class="o">=</span> <span class="n">runif</span><span class="p">(</span><span class="m">100</span><span class="p">,</span> <span class="m">47.35</span><span class="p">,</span> <span class="m">47.6</span><span class="p">),</span>
+	<span class="s2">"val"</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">T</span><span class="p">)</span> <span class="c1"># replace=T means that repeats are allowed
 </span><span class="p">)</span></code></pre></figure>
 
 <p>Then calculate voronoi with the <code class="highlighter-rouge">deldir</code> package.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">voronoi</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">deldir</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">lon</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">$</span><span class="n">lat</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">voronoi</span> <span class="o">&lt;-</span> <span class="n">deldir</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">lon</span><span class="p">,</span> <span class="n">data</span><span class="o">$</span><span class="n">lat</span><span class="p">)</span></code></pre></figure>
 
 <p>Create SpatialPointsDataFrame from the DataFrame containing the sample points using <code class="highlighter-rouge">rgdal</code> package.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">coords</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data</span><span class="w">
-</span><span class="n">coordinates</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="o">~</span><span class="n">lon</span><span class="o">+</span><span class="n">lat</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">coords</span> <span class="o">&lt;-</span> <span class="n">data</span>
+<span class="n">coordinates</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="o">~</span><span class="n">lon</span><span class="o">+</span><span class="n">lat</span></code></pre></figure>
 
 <p>To use the same method for plotting as before, the data structure of the voronoi diagram has to be converted to SpatialPolygonsDataFrame. For this step I use Carson Farmer’s conversion code<a href="http://carsonfarmer.com/2009/09/voronoi-polygons-with-r/">[1]</a>, that can be also found <a href="/r-blog/assets/voronoipolygons.R">directly here</a>.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">vp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">voronoipolygons</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">vp</span> <span class="o">&lt;-</span> <span class="n">voronoipolygons</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span></code></pre></figure>
 
 <p>Then plot it. This code fragment is based on <a href="http://letstalkdata.com/2014/05/creating-voronoi-diagrams-with-ggplot/">[2]</a></p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
-  </span><span class="c1"># plot the voronoi lines
-</span><span class="w">  </span><span class="n">geom_segment</span><span class="p">(</span><span class="w">
-    </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">xend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">yend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="m">2</span><span class="p">),</span><span class="w">
-    </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
-    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">voronoi</span><span class="o">$</span><span class="n">dirsgs</span><span class="p">,</span><span class="w">
-    </span><span class="n">linetype</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
-    </span><span class="n">color</span><span class="o">=</span><span class="w"> </span><span class="s2">"#FFB958"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> 
-  </span><span class="c1"># plot the points
-</span><span class="w">  </span><span class="n">geom_point</span><span class="p">(</span><span class="w">
-    </span><span class="n">fill</span><span class="o">=</span><span class="n">rgb</span><span class="p">(</span><span class="m">70</span><span class="p">,</span><span class="m">130</span><span class="p">,</span><span class="m">180</span><span class="p">,</span><span class="m">255</span><span class="p">,</span><span class="n">maxColorValue</span><span class="o">=</span><span class="m">255</span><span class="p">),</span><span class="w">
-    </span><span class="n">pch</span><span class="o">=</span><span class="m">21</span><span class="p">,</span><span class="w">
-    </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
-    </span><span class="n">color</span><span class="o">=</span><span class="s2">"#333333"</span><span class="p">)</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span> <span class="o">&lt;-</span> <span class="n">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">))</span> <span class="o">+</span>
+  <span class="c1"># plot the voronoi lines
+</span>  <span class="n">geom_segment</span><span class="p">(</span>
+    <span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y1</span><span class="p">,</span> <span class="n">xend</span> <span class="o">=</span> <span class="n">x2</span><span class="p">,</span> <span class="n">yend</span> <span class="o">=</span> <span class="n">y2</span><span class="p">),</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">voronoi</span><span class="o">$</span><span class="n">dirsgs</span><span class="p">,</span>
+    <span class="n">linetype</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span> <span class="s2">"#FFB958"</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="c1"># plot the points
+</span>  <span class="n">geom_point</span><span class="p">(</span>
+    <span class="n">fill</span><span class="o">=</span><span class="n">rgb</span><span class="p">(</span><span class="m">70</span><span class="p">,</span><span class="m">130</span><span class="p">,</span><span class="m">180</span><span class="p">,</span><span class="m">255</span><span class="p">,</span><span class="n">maxColorValue</span><span class="o">=</span><span class="m">255</span><span class="p">),</span>
+    <span class="n">pch</span><span class="o">=</span><span class="m">21</span><span class="p">,</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"#333333"</span><span class="p">)</span>
     
-</span><span class="c1"># then save to file
-</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"output_partial.png"</span><span class="p">,</span><span class="w">  </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
+<span class="c1"># then save to file
+</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">"output_partial.png"</span><span class="p">,</span>  <span class="n">width</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="m">7</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
 
 <h1 id="partial-result">Partial result</h1>
 
@@ -113,26 +113,26 @@
 <p>That is just a plotted Voronoi diagram, let’s color it!
 First convert the SpatialPolygonsDataFrame to DataFrame with <code class="highlighter-rouge">fortify</code> and keeping metadata.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="o">$</span><span class="n">id</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rownames</span><span class="p">(</span><span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="p">)</span><span class="w">
-</span><span class="n">vp.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">fortify</span><span class="p">(</span><span class="n">vp</span><span class="p">)</span><span class="w">
-</span><span class="n">vp.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">join</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span><span class="w"> </span><span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"id"</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="o">$</span><span class="n">id</span> <span class="o">&lt;-</span> <span class="n">rownames</span><span class="p">(</span><span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="p">)</span>
+<span class="n">vp.df</span> <span class="o">&lt;-</span> <span class="n">fortify</span><span class="p">(</span><span class="n">vp</span><span class="p">)</span>
+<span class="n">vp.df</span> <span class="o">&lt;-</span> <span class="n">join</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span> <span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">"id"</span><span class="p">)</span></code></pre></figure>
 
 <p>Now merge random <code class="highlighter-rouge">val</code> data using the id column.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">vp.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">join</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">4</span><span class="p">)],</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"id"</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">vp.df</span> <span class="o">&lt;-</span> <span class="n">join</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span> <span class="n">data</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">4</span><span class="p">)],</span> <span class="n">by</span><span class="o">=</span><span class="s2">"id"</span><span class="p">)</span></code></pre></figure>
 
 <p>And finally plot it!</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
-		</span><span class="c1"># to draw polygons 
-</span><span class="w">        </span><span class="n">geom_polygon</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="n">val</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
-        </span><span class="c1"># color the polygons dynamically with the color palette from green (smallest) to red (biggest) via yellow
-</span><span class="w">        </span><span class="n">scale_fill_distiller</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"values"</span><span class="p">,</span><span class="w"> </span><span class="n">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"RdYlGn"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
-        </span><span class="c1"># to draw boundaries
-</span><span class="w">        </span><span class="n">geom_path</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">plot</span> <span class="o">&lt;-</span> <span class="n">ggplot</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
+		<span class="c1"># to draw polygons 
+</span>        <span class="n">geom_polygon</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> 
+        <span class="c1"># color the polygons dynamically with the color palette from green (smallest) to red (biggest) via yellow
+</span>        <span class="n">scale_fill_distiller</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"values"</span><span class="p">,</span> <span class="n">palette</span> <span class="o">=</span> <span class="s2">"RdYlGn"</span><span class="p">)</span> <span class="o">+</span>
+        <span class="c1"># to draw boundaries
+</span>        <span class="n">geom_path</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span>
 
-</span><span class="c1"># then save to file
-</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"output.png"</span><span class="p">,</span><span class="w">  </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
+<span class="c1"># then save to file
+</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">"output.png"</span><span class="p">,</span>  <span class="n">width</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="m">7</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
 
 <h1 id="result">Result</h1>
 
@@ -140,68 +140,68 @@ First convert the SpatialPolygonsDataFrame to DataFrame with <code class="highli
 
 <h1 id="full-code">Full code</h1>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">deldir</span><span class="p">)</span><span class="w">
-</span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
-</span><span class="n">library</span><span class="p">(</span><span class="n">rgdal</span><span class="p">)</span><span class="w">
-</span><span class="c1"># from http://carsonfarmer.com/2009/09/voronoi-polygons-with-r/
-</span><span class="n">source</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s2">"voronoipolygons.R"</span><span class="p">)</span><span class="w">
-</span><span class="n">library</span><span class="p">(</span><span class="n">plyr</span><span class="p">)</span><span class="w">
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">deldir</span><span class="p">)</span>
+<span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="n">library</span><span class="p">(</span><span class="n">rgdal</span><span class="p">)</span>
+<span class="c1"># from http://carsonfarmer.com/2009/09/voronoi-polygons-with-r/
+</span><span class="n">source</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s2">"voronoipolygons.R"</span><span class="p">)</span>
+<span class="n">library</span><span class="p">(</span><span class="n">plyr</span><span class="p">)</span>
 
-</span><span class="c1"># generate some test data
-</span><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="w">
-	</span><span class="s2">"id"</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">100</span><span class="p">,</span><span class="w">
-	</span><span class="s2">"lon"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="m">18.95</span><span class="p">,</span><span class="w"> </span><span class="m">19.3</span><span class="p">),</span><span class="w">
-	</span><span class="s2">"lat"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="m">47.35</span><span class="p">,</span><span class="w"> </span><span class="m">47.6</span><span class="p">),</span><span class="w">
-	</span><span class="s2">"val"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">100</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="o">=</span><span class="nb">T</span><span class="p">)</span><span class="w"> </span><span class="c1"># replace=T means that repeats are allowed
-</span><span class="p">)</span><span class="w">
+<span class="c1"># generate some test data
+</span><span class="n">data</span> <span class="o">&lt;-</span> <span class="n">data.frame</span><span class="p">(</span>
+	<span class="s2">"id"</span>  <span class="o">=</span> <span class="m">1</span><span class="o">:</span><span class="m">100</span><span class="p">,</span>
+	<span class="s2">"lon"</span> <span class="o">=</span> <span class="n">runif</span><span class="p">(</span><span class="m">100</span><span class="p">,</span> <span class="m">18.95</span><span class="p">,</span> <span class="m">19.3</span><span class="p">),</span>
+	<span class="s2">"lat"</span> <span class="o">=</span> <span class="n">runif</span><span class="p">(</span><span class="m">100</span><span class="p">,</span> <span class="m">47.35</span><span class="p">,</span> <span class="m">47.6</span><span class="p">),</span>
+	<span class="s2">"val"</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">T</span><span class="p">)</span> <span class="c1"># replace=T means that repeats are allowed
+</span><span class="p">)</span>
 
-</span><span class="c1"># generate voronoi
-</span><span class="n">voronoi</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">deldir</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">lon</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">$</span><span class="n">lat</span><span class="p">)</span><span class="w">
+<span class="c1"># generate voronoi
+</span><span class="n">voronoi</span> <span class="o">&lt;-</span> <span class="n">deldir</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">lon</span><span class="p">,</span> <span class="n">data</span><span class="o">$</span><span class="n">lat</span><span class="p">)</span>
 
-</span><span class="c1"># create SpatialPointsDataFrame from the data
-</span><span class="n">coords</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data</span><span class="w">
-</span><span class="n">coordinates</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="o">~</span><span class="n">lon</span><span class="o">+</span><span class="n">lat</span><span class="w">
+<span class="c1"># create SpatialPointsDataFrame from the data
+</span><span class="n">coords</span> <span class="o">&lt;-</span> <span class="n">data</span>
+<span class="n">coordinates</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="o">~</span><span class="n">lon</span><span class="o">+</span><span class="n">lat</span>
 
-</span><span class="c1"># convert voronoi
-</span><span class="n">vp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">voronoipolygons</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="w">
+<span class="c1"># convert voronoi
+</span><span class="n">vp</span> <span class="o">&lt;-</span> <span class="n">voronoipolygons</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
 
-</span><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
-	</span><span class="c1"># plot the voronoi lines
-</span><span class="w">	</span><span class="n">geom_segment</span><span class="p">(</span><span class="w">
-		</span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">xend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">yend</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="m">2</span><span class="p">),</span><span class="w">
-		</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
-		</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">voronoi</span><span class="o">$</span><span class="n">dirsgs</span><span class="p">,</span><span class="w">
-		</span><span class="n">linetype</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
-		</span><span class="n">color</span><span class="o">=</span><span class="w"> </span><span class="s2">"#FFB958"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> 
-	</span><span class="c1"># plot the points
-</span><span class="w">	</span><span class="n">geom_point</span><span class="p">(</span><span class="w">
-		</span><span class="n">fill</span><span class="o">=</span><span class="n">rgb</span><span class="p">(</span><span class="m">70</span><span class="p">,</span><span class="m">130</span><span class="p">,</span><span class="m">180</span><span class="p">,</span><span class="m">255</span><span class="p">,</span><span class="n">maxColorValue</span><span class="o">=</span><span class="m">255</span><span class="p">),</span><span class="w">
-		</span><span class="n">pch</span><span class="o">=</span><span class="m">21</span><span class="p">,</span><span class="w">
-		</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
-		</span><span class="n">color</span><span class="o">=</span><span class="s2">"#333333"</span><span class="p">)</span><span class="w">
+<span class="n">plot</span> <span class="o">&lt;-</span> <span class="n">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">))</span> <span class="o">+</span>
+	<span class="c1"># plot the voronoi lines
+</span>	<span class="n">geom_segment</span><span class="p">(</span>
+		<span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">y1</span><span class="p">,</span> <span class="n">xend</span> <span class="o">=</span> <span class="n">x2</span><span class="p">,</span> <span class="n">yend</span> <span class="o">=</span> <span class="n">y2</span><span class="p">),</span>
+		<span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">voronoi</span><span class="o">$</span><span class="n">dirsgs</span><span class="p">,</span>
+		<span class="n">linetype</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
+		<span class="n">color</span><span class="o">=</span> <span class="s2">"#FFB958"</span><span class="p">)</span> <span class="o">+</span> 
+	<span class="c1"># plot the points
+</span>	<span class="n">geom_point</span><span class="p">(</span>
+		<span class="n">fill</span><span class="o">=</span><span class="n">rgb</span><span class="p">(</span><span class="m">70</span><span class="p">,</span><span class="m">130</span><span class="p">,</span><span class="m">180</span><span class="p">,</span><span class="m">255</span><span class="p">,</span><span class="n">maxColorValue</span><span class="o">=</span><span class="m">255</span><span class="p">),</span>
+		<span class="n">pch</span><span class="o">=</span><span class="m">21</span><span class="p">,</span>
+		<span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span>
+		<span class="n">color</span><span class="o">=</span><span class="s2">"#333333"</span><span class="p">)</span>
 
-</span><span class="c1"># then save to file
-</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"output_partial.png"</span><span class="p">,</span><span class="w">  </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cairo-png"</span><span class="p">)</span><span class="w">
+<span class="c1"># then save to file
+</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">"output_partial.png"</span><span class="p">,</span>  <span class="n">width</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="m">7</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s2">"cairo-png"</span><span class="p">)</span>
 
-</span><span class="c1"># fortify with keeping metadata
-</span><span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="o">$</span><span class="n">id</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rownames</span><span class="p">(</span><span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="p">)</span><span class="w">
-</span><span class="n">vp.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">fortify</span><span class="p">(</span><span class="n">vp</span><span class="p">)</span><span class="w">
-</span><span class="n">vp.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">join</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span><span class="w"> </span><span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"id"</span><span class="p">)</span><span class="w">
+<span class="c1"># fortify with keeping metadata
+</span><span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="o">$</span><span class="n">id</span> <span class="o">&lt;-</span> <span class="n">rownames</span><span class="p">(</span><span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="p">)</span>
+<span class="n">vp.df</span> <span class="o">&lt;-</span> <span class="n">fortify</span><span class="p">(</span><span class="n">vp</span><span class="p">)</span>
+<span class="n">vp.df</span> <span class="o">&lt;-</span> <span class="n">join</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span> <span class="n">vp</span><span class="o">@</span><span class="n">data</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s2">"id"</span><span class="p">)</span>
 
-</span><span class="c1"># add values from the sample data to the voronoi data frame
-</span><span class="n">vp.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">join</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">4</span><span class="p">)],</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"id"</span><span class="p">)</span><span class="w">
+<span class="c1"># add values from the sample data to the voronoi data frame
+</span><span class="n">vp.df</span> <span class="o">&lt;-</span> <span class="n">join</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span> <span class="n">data</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">4</span><span class="p">)],</span> <span class="n">by</span><span class="o">=</span><span class="s2">"id"</span><span class="p">)</span>
 
-</span><span class="c1"># plot it
-</span><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
-		</span><span class="c1"># to draw polygons 
-</span><span class="w">        </span><span class="n">geom_polygon</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="n">val</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
-        </span><span class="c1"># color the polygons dynamically with the color palette from green (smallest) to red (biggest) via yellow
-</span><span class="w">        </span><span class="n">scale_fill_distiller</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"values"</span><span class="p">,</span><span class="w"> </span><span class="n">palette</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"RdYlGn"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
-        </span><span class="c1"># to draw boundaries
-</span><span class="w">        </span><span class="n">geom_path</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span><span class="w"> 
+<span class="c1"># plot it
+</span><span class="n">plot</span> <span class="o">&lt;-</span> <span class="n">ggplot</span><span class="p">(</span><span class="n">vp.df</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
+		<span class="c1"># to draw polygons 
+</span>        <span class="n">geom_polygon</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="n">val</span><span class="p">))</span> <span class="o">+</span> 
+        <span class="c1"># color the polygons dynamically with the color palette from green (smallest) to red (biggest) via yellow
+</span>        <span class="n">scale_fill_distiller</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"values"</span><span class="p">,</span> <span class="n">palette</span> <span class="o">=</span> <span class="s2">"RdYlGn"</span><span class="p">)</span> <span class="o">+</span>
+        <span class="c1"># to draw boundaries
+</span>        <span class="n">geom_path</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span> 
 
-</span><span class="c1"># then save to file
-</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"output.png"</span><span class="p">,</span><span class="w">  </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
+<span class="c1"># then save to file
+</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">"output.png"</span><span class="p">,</span>  <span class="n">width</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="m">7</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
 
 <h1 id="references">References</h1>
 
