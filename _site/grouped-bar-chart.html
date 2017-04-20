@@ -10,8 +10,8 @@
   <meta name="description" content="Grouped bar chart">
 
   <link rel="stylesheet" href="/r-blog/css/main.css">
-  <link rel="canonical" href="pintergreg.github.io/r-blog/grouped-bar-chart">
-  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="pintergreg.github.io/r-blog/feed.xml">
+  <link rel="canonical" href="http://localhost:4000/r-blog/grouped-bar-chart">
+  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="http://localhost:4000/r-blog/feed.xml">
 </head>
 
 
@@ -64,30 +64,30 @@
   <div class="post-content" itemprop="articleBody">
     <h1 id="grouped-bar-chart">Grouped bar chart</h1>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">require</span><span class="p">(</span><span class="s2">"ggplot2"</span><span class="p">)</span>
-<span class="n">require</span><span class="p">(</span><span class="s2">"reshape2"</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">require</span><span class="p">(</span><span class="s2">"ggplot2"</span><span class="p">)</span><span class="w">
+</span><span class="n">require</span><span class="p">(</span><span class="s2">"reshape2"</span><span class="p">)</span><span class="w">
 
-<span class="c1"># first, generate some data
-</span><span class="n">x</span> <span class="o">=</span> <span class="n">seq</span><span class="p">(</span><span class="n">from</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="m">7</span><span class="p">)</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="m">58</span><span class="p">,</span> <span class="m">42</span><span class="p">,</span> <span class="m">61</span><span class="p">,</span> <span class="m">47</span><span class="p">,</span> <span class="m">32</span><span class="p">,</span> <span class="m">12</span><span class="p">,</span> <span class="m">20</span><span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="m">38</span><span class="p">,</span> <span class="m">28</span><span class="p">,</span> <span class="m">54</span><span class="p">,</span> <span class="m">51</span><span class="p">,</span> <span class="m">35</span><span class="p">,</span> <span class="m">63</span><span class="p">,</span> <span class="m">57</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">&lt;-</span> <span class="n">data.frame</span><span class="p">(</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">b</span>
-<span class="p">)</span>
+</span><span class="c1"># first, generate some data
+</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="n">from</span><span class="o">=</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">to</span><span class="o">=</span><span class="m">7</span><span class="p">)</span><span class="w">
+</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">58</span><span class="p">,</span><span class="w"> </span><span class="m">42</span><span class="p">,</span><span class="w"> </span><span class="m">61</span><span class="p">,</span><span class="w"> </span><span class="m">47</span><span class="p">,</span><span class="w"> </span><span class="m">32</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w">
+</span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">38</span><span class="p">,</span><span class="w"> </span><span class="m">28</span><span class="p">,</span><span class="w"> </span><span class="m">54</span><span class="p">,</span><span class="w"> </span><span class="m">51</span><span class="p">,</span><span class="w"> </span><span class="m">35</span><span class="p">,</span><span class="w"> </span><span class="m">63</span><span class="p">,</span><span class="w"> </span><span class="m">57</span><span class="p">)</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="w">
+    </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w">
+    </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w">
+    </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="w">
+</span><span class="p">)</span><span class="w">
 
-<span class="c1"># melt the data frame for plotting
-</span><span class="n">df.melted</span> <span class="o">&lt;-</span> <span class="n">melt</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">id.vars</span><span class="o">=</span><span class="s1">'x'</span><span class="p">)</span>
+</span><span class="c1"># melt the data frame for plotting
+</span><span class="n">df.melted</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">melt</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">id.vars</span><span class="o">=</span><span class="s1">'x'</span><span class="p">)</span><span class="w">
 
-<span class="c1"># do the plotting
-</span><span class="n">plot</span> <span class="o">&lt;-</span> <span class="n">ggplot</span><span class="p">(</span><span class="n">df.melted</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span> <span class="o">+</span> 
-<span class="n">geom_bar</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span> <span class="o">=</span> <span class="n">variable</span><span class="p">),</span> <span class="n">position</span> <span class="o">=</span> <span class="s2">"dodge"</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s2">"identity"</span><span class="p">)</span> <span class="o">+</span> 
-<span class="c1"># add common x axis label
-</span><span class="n">xlab</span><span class="p">(</span><span class="s2">"A and B grouped bar chart"</span><span class="p">)</span>
+</span><span class="c1"># do the plotting
+</span><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">df.melted</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+</span><span class="n">geom_bar</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">variable</span><span class="p">),</span><span class="w"> </span><span class="n">position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"dodge"</span><span class="p">,</span><span class="w"> </span><span class="n">stat</span><span class="o">=</span><span class="s2">"identity"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+</span><span class="c1"># add common x axis label
+</span><span class="n">xlab</span><span class="p">(</span><span class="s2">"A and B grouped bar chart"</span><span class="p">)</span><span class="w">
 
-<span class="c1"># then save to file
-</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">"output.png"</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
+</span><span class="c1"># then save to file
+</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"output.png"</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
 
 <h1 id="result">Result</h1>
 
@@ -97,7 +97,7 @@
 
 <p>The stucture of the original <code class="highlighter-rouge">df</code>:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>  x  a  b
+<div class="language-html highlighter-rouge"><pre class="highlight"><code>  x  a  b
 1 1 58 38
 2 2 42 28
 3 3 61 54

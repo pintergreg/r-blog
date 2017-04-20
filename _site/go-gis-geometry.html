@@ -10,8 +10,8 @@
   <meta name="description" content="GIS in Golang (part 1?)">
 
   <link rel="stylesheet" href="/r-blog/css/main.css">
-  <link rel="canonical" href="pintergreg.github.io/r-blog/go-gis-geometry">
-  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="pintergreg.github.io/r-blog/feed.xml">
+  <link rel="canonical" href="http://localhost:4000/r-blog/go-gis-geometry">
+  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="http://localhost:4000/r-blog/feed.xml">
 </head>
 
 
@@ -90,7 +90,7 @@ POLYGON ((0 0, 0 2, 2 2, 2 0, 0 0))
 
 <h3 id="usage-in-gogeos">usage in <code class="highlighter-rouge">gogeos</code></h3>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">var</span><span class="x"> </span><span class="n">p1</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POINT (1 1)"</span><span class="p">))</span><span class="x">
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">var</span><span class="x"> </span><span class="n">p1</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POINT (1 1)"</span><span class="p">))</span><span class="x">
 </span><span class="k">var</span><span class="x"> </span><span class="n">p2</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POINT (1.5 2)"</span><span class="p">))</span><span class="x">
 </span><span class="k">var</span><span class="x"> </span><span class="n">p3</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POINT (2.5 1)"</span><span class="p">))</span><span class="x">
 </span><span class="k">var</span><span class="x"> </span><span class="n">poly</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">geos</span><span class="o">.</span><span class="n">Must</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">FromWKT</span><span class="p">(</span><span class="s">"POLYGON ((0 0, 0 2, 2 2, 2 0, 0 0))"</span><span class="p">))</span><span class="x">
@@ -101,7 +101,7 @@ POLYGON ((0 0, 0 2, 2 2, 2 0, 0 0))
 
 <p>Geometries has an <code class="highlighter-rouge">Intersencts</code> method that returns a <code class="highlighter-rouge">bool</code> and an <em>error</em> value.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">var</span><span class="x"> </span><span class="n">b</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">poly</span><span class="o">.</span><span class="n">Intersects</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span><span class="x">
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">var</span><span class="x"> </span><span class="n">b</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">=</span><span class="x"> </span><span class="n">poly</span><span class="o">.</span><span class="n">Intersects</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span><span class="x">
 </span></code></pre>
 </div>
 
@@ -109,7 +109,7 @@ POLYGON ((0 0, 0 2, 2 2, 2 0, 0 0))
 
 <p>As the <code class="highlighter-rouge">Intersencts</code> method returns two value I used the <a href="https://golang.org/pkg/text/template/#Must">Must template</a> for “error checking” that returns the boolean value if no error is happened. N.B. <code class="highlighter-rouge">geos</code> has its own for Geometry parsing from WKT.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="k">package</span><span class="x"> </span><span class="n">main</span><span class="x">
 
 </span><span class="k">import</span><span class="x"> </span><span class="p">(</span><span class="x">
 	</span><span class="s">"fmt"</span><span class="x">

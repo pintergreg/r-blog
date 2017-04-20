@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <title>Leaflet Choropleth Tutorial</title>
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="assets/leaflet/leaflet.css"/>
+        <script src="assets/leaflet/leaflet.js"></script>
+        <script src="assets/leaflet/jquery.min.js"></script>
+        <script src="assets/leaflet/choropleth.js"></script>
+
+        <style>#map { width: 700px; height: 500px; }
+    .info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+    .legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }</style>
+    </head>
+    <body>
+        <div id="map"></div>
+
+        <script type="text/javascript">
+            // Add a leaflet viewport
+            var map = L.map("map").setView([47.5, 19.15], 11);
+
+            L.tileLayer("http://tile.stamen.com/toner/{z}/{x}/{y}.png", {
+                maxZoom: 18,
+                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+                    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                    'Imagery © <a href="maps.stamen.com">stamen</a>',
+                id: 'mapbox.light'
+            }).addTo(map);
+
+            // Fetch GeoJSON and the data and merge them
+            $.when($.getJSON("assets/leaflet/bp_grid_1000.geo.json"), $.getJSON("assets/leaflet/data.json")
+                ).done(function (responseGeojson, responseData) {
+                var data = responseData[0]
+                var grid = responseGeojson[0]
+                
+                for (var i = 0; i < grid["features"].length; i++){
+                    cell_id = grid["features"][i]["properties"]["id"];
+                    if (data[cell_id]){
+                        grid["features"][i]["properties"]["value"] = data[cell_id];
+                    } else {
+                        grid["features"][i]["properties"]["value"] = 0;
+                    }
+                }
+            
+            // Choropleth
+            var choroplethLayer = L.choropleth(grid, {
+                valueProperty: "value", // which property in the features to use
+                scale: ["white", "yellow", "red", "black"], // chroma.js scale - include as many as you like
+                steps: 7, // number of breaks or steps in range
+                mode: "q", // q for quantile, e for equidistant, k for k-means
+                style: {
+                    color: "#ffffff", // border color
+                    weight: 1,
+                    fillOpacity: 0.85
+                },
+                onEachFeature: function (feature, layer) {
+                    layer.bindPopup("Cell " + feature.properties.id + "<br>" + "value: " + feature.properties.value)
+                }
+            }).addTo(map)
+
+
+            // Add legend (don't forget to add the CSS from index.html)
+            var legend = L.control({ position: "bottomright" })
+            legend.onAdd = function (map) {
+                var div = L.DomUtil.create("div", "info legend")
+                var limits = choroplethLayer.options.limits
+                var colors = choroplethLayer.options.colors
+                var labels = []
+
+                div.innerHTML = "Legend";
+
+                limits.forEach(function (limit, index) {
+                    var prev = index == 0 ? 0 : index - 1;
+                    labels.push('<li style="list-style-type: none;"><span style="background-color: ' + colors[index] + '; width: 1em; height: 1em; display:inline-block; margin-right: 1ex; border: 0.5px solid #444; padding: 1px;"></span><span style="vertical-align: top;">' + limits[prev].toFixed(6) + ' - ' +limit.toFixed(6) + '</span></li>')
+                })
+
+                div.innerHTML += '<ul style="padding: 2px; margin: 1em 0 0 0">' + labels.join("") + '</ul>'
+                return div
+            }
+            legend.addTo(map)
+            })
+        
+        </script>
+    </body>
+</html>

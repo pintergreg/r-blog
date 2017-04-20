@@ -10,8 +10,8 @@
   <meta name="description" content="In a post earlier points over polygons were counted and the polygons were colored according to that count. Next I want to aggregate points by some property v...">
 
   <link rel="stylesheet" href="/r-blog/css/main.css">
-  <link rel="canonical" href="pintergreg.github.io/r-blog/aggregate-point-over-polygons">
-  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="pintergreg.github.io/r-blog/feed.xml">
+  <link rel="canonical" href="http://localhost:4000/r-blog/aggregate-point-over-polygons">
+  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="http://localhost:4000/r-blog/feed.xml">
 </head>
 
 
@@ -68,46 +68,46 @@
 
 <p>First, read the geoJSON and create some random points over Budapest with random values from 1 to 10, like before.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">rgdal</span><span class="p">)</span>
-<span class="n">library</span><span class="p">(</span><span class="n">rgeos</span><span class="p">)</span>
-<span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">rgdal</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">rgeos</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span><span class="w">
 
-<span class="c1"># read the geojson file
-</span><span class="n">bp</span> <span class="o">&lt;-</span> <span class="n">readOGR</span><span class="p">(</span><span class="s2">"bp_districts.geojson"</span><span class="p">,</span> <span class="s2">"OGRGeoJSON"</span><span class="p">)</span>
+</span><span class="c1"># read the geojson file
+</span><span class="n">bp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">readOGR</span><span class="p">(</span><span class="s2">"bp_districts.geojson"</span><span class="p">,</span><span class="w"> </span><span class="s2">"OGRGeoJSON"</span><span class="p">)</span><span class="w">
 
-<span class="c1"># generate random points to the map with some value from 1 to 10
-</span><span class="n">data</span> <span class="o">&lt;-</span> <span class="n">data.frame</span><span class="p">(</span>
-	<span class="s2">"lon"</span> <span class="o">=</span> <span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span> <span class="m">18.95</span><span class="p">,</span> <span class="m">19.3</span><span class="p">),</span>
-	<span class="s2">"lat"</span> <span class="o">=</span> <span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span> <span class="m">47.35</span><span class="p">,</span> <span class="m">47.6</span><span class="p">),</span>
-	<span class="s2">"val"</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span> <span class="m">500</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">T</span><span class="p">)</span> <span class="c1"># replace=T means that repeats are allowed
-</span><span class="p">)</span>
+</span><span class="c1"># generate random points to the map with some value from 1 to 10
+</span><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="w">
+	</span><span class="s2">"lon"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span><span class="w"> </span><span class="m">18.95</span><span class="p">,</span><span class="w"> </span><span class="m">19.3</span><span class="p">),</span><span class="w">
+	</span><span class="s2">"lat"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runif</span><span class="p">(</span><span class="m">500</span><span class="p">,</span><span class="w"> </span><span class="m">47.35</span><span class="p">,</span><span class="w"> </span><span class="m">47.6</span><span class="p">),</span><span class="w">
+	</span><span class="s2">"val"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="m">500</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="o">=</span><span class="nb">T</span><span class="p">)</span><span class="w"> </span><span class="c1"># replace=T means that repeats are allowed
+</span><span class="p">)</span><span class="w">
 
-<span class="c1"># create SpatialPointsDataFrame from a data.frame
-</span><span class="n">points</span> <span class="o">&lt;-</span> <span class="n">data</span>
-<span class="n">coordinates</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="o">~</span><span class="n">lon</span><span class="o">+</span><span class="n">lat</span></code></pre></figure>
+</span><span class="c1"># create SpatialPointsDataFrame from a data.frame
+</span><span class="n">points</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data</span><span class="w">
+</span><span class="n">coordinates</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="o">~</span><span class="n">lon</span><span class="o">+</span><span class="n">lat</span></code></pre></figure>
 
 <h1 id="subsetting">Subsetting</h1>
 
 <p>Then, plot only that points, that are over Budapest. <a href="http://www.inside-r.org/packages/cran/rgeos/docs/gIntersection">rgeos::gIntersects</a> returns a vector with boolean values: <code class="highlighter-rouge">TRUE</code> if in the polygon, <code class="highlighter-rouge">FALSE</code> if not, which is perfect for subsetting.</p>
 
 <figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># using rgeos::gIntersects to subset points only to those that are over Budapest
-</span><span class="n">points.over.bp</span> <span class="o">&lt;-</span> <span class="n">points</span><span class="p">[</span><span class="n">apply</span><span class="p">(</span><span class="n">gIntersects</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">bp</span><span class="p">,</span> <span class="n">byid</span><span class="o">=</span><span class="n">TRUE</span><span class="p">),</span> <span class="m">2</span><span class="p">,</span> <span class="n">any</span><span class="p">),]</span></code></pre></figure>
+</span><span class="n">points.over.bp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">points</span><span class="p">[</span><span class="n">apply</span><span class="p">(</span><span class="n">gIntersects</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">bp</span><span class="p">,</span><span class="w"> </span><span class="n">byid</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">any</span><span class="p">),]</span></code></pre></figure>
 
 <h1 id="plot-that-points">Plot that points!</h1>
 
 <figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># transform the geoJSON into a data frame so ggplot2 can plot it
-</span><span class="n">bp.df</span> <span class="o">&lt;-</span> <span class="n">fortify</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span>
+</span><span class="n">bp.df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">fortify</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span><span class="w">
 
-<span class="c1"># plot Budapest's districts
-</span><span class="n">plot</span> <span class="o">=</span> <span class="n">ggplot</span><span class="p">(</span><span class="n">bp.df</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
-       <span class="n">geom_polygon</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"white"</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># to draw polygons 
-</span>       <span class="n">geom_path</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span> <span class="c1"># to draw boundaries
-</span>
-<span class="c1"># plot points
-</span><span class="n">plot</span> <span class="o">=</span> <span class="n">plot</span> <span class="o">+</span> <span class="n">geom_point</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">as.data.frame</span><span class="p">(</span><span class="n">points.over.bp</span><span class="p">),</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">lon</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">lat</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="m">42</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+</span><span class="c1"># plot Budapest's districts
+</span><span class="n">plot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ggplot</span><span class="p">(</span><span class="n">bp.df</span><span class="p">,</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w">
+       </span><span class="n">geom_polygon</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"white"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="c1"># to draw polygons 
+</span><span class="w">       </span><span class="n">geom_path</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span><span class="w"> </span><span class="c1"># to draw boundaries
+</span><span class="w">
+</span><span class="c1"># plot points
+</span><span class="n">plot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">geom_point</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as.data.frame</span><span class="p">(</span><span class="n">points.over.bp</span><span class="p">),</span><span class="w"> </span><span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lon</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lat</span><span class="p">,</span><span class="w"> </span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">42</span><span class="p">),</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span><span class="w">
 
-<span class="c1"># then save to file
-</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">"output.png"</span><span class="p">,</span>  <span class="n">width</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="m">7</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
+</span><span class="c1"># then save to file
+</span><span class="n">ggsave</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"output.png"</span><span class="p">,</span><span class="w">  </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"cairo-png"</span><span class="p">)</span></code></pre></figure>
 
 <h1 id="result">Result</h1>
 
@@ -118,13 +118,13 @@
 <p>Next step is to determine a point to which district belongs. So, I want a column in the points  <code class="highlighter-rouge">data.frame</code> with the district ids. <a href="http://www.inside-r.org/packages/cran/sp/docs/aggregate.Spatial"><code class="highlighter-rouge">sp::over</code></a> can do the first part. The geoJSON I use still contains my own district id (<code class="highlighter-rouge">did</code>) metadata. <a href="/r-blog/get-administrative-bounderies-from-osm">See this post</a>!</p>
 
 <figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># points has to use the same projection as my geo data from geoJSON
-</span><span class="n">sp</span><span class="o">::</span><span class="n">proj4string</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">sp</span><span class="o">::</span><span class="n">proj4string</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span>
+</span><span class="n">sp</span><span class="o">::</span><span class="n">proj4string</span><span class="p">(</span><span class="n">points</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sp</span><span class="o">::</span><span class="n">proj4string</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span><span class="w">
 
-<span class="c1"># match points to districts
-</span><span class="n">rslt</span> <span class="o">&lt;-</span> <span class="n">sp</span><span class="o">::</span><span class="n">over</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">bp</span><span class="p">)</span>
+</span><span class="c1"># match points to districts
+</span><span class="n">rslt</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sp</span><span class="o">::</span><span class="n">over</span><span class="p">(</span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">bp</span><span class="p">)</span><span class="w">
 
-<span class="c1"># add the district identifiers to a new column, called `dist` to the original data data.frame
-</span><span class="n">data</span><span class="p">[</span><span class="s2">"dist"</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="n">rslt</span><span class="p">[,</span><span class="m">2</span><span class="p">]</span></code></pre></figure>
+</span><span class="c1"># add the district identifiers to a new column, called `dist` to the original data data.frame
+</span><span class="n">data</span><span class="p">[</span><span class="s2">"dist"</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rslt</span><span class="p">[,</span><span class="m">2</span><span class="p">]</span></code></pre></figure>
 
 <p>Check the data <code class="highlighter-rouge">data.frame</code>!</p>
 
@@ -152,7 +152,7 @@
 
 <p>Finally, group the points by the districts and sum the values.</p>
 
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">aggregate</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">val</span> <span class="o">~</span> <span class="n">data</span><span class="o">$</span><span class="n">dist</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">sum</span><span class="p">)</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">aggregate</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">val</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">data</span><span class="o">$</span><span class="n">dist</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">sum</span><span class="p">)</span></code></pre></figure>
 
 <p>And the output:</p>
 
