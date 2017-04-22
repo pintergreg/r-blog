@@ -7,7 +7,7 @@ demo: leaflet_choropleth/leaflet.html
 ---
 
 [Leaflet](http://leafletjs.com/) is an "an open-source JavaScript library
-for mobile-friendly interactive maps", that can [plot GeoJSONs](http://leafletjs.com/examples/geojson/) onto an OSM map. Of course using this for creating choropleths is also [possible](http://leafletjs.com/examples/choropleth/), but I lack the automatic value scaling. I was not the only one, so a [very nice extension was created](https://github.com/timwis/leaflet-choropleth) for the task, called.
+for mobile-friendly interactive maps", that can [plot GeoJSONs](http://leafletjs.com/examples/geojson/) onto an OSM map. Of course using this for creating choropleth is also [possible](http://leafletjs.com/examples/choropleth/), but I lack the automatic value scaling. I was not the only one, so a [very nice extension was created](https://github.com/timwis/leaflet-choropleth) for the task.
 
 It has a [basic example](https://github.com/timwis/leaflet-choropleth/blob/gh-pages/examples/basic/demo.js), [one for legends](https://github.com/timwis/leaflet-choropleth/blob/gh-pages/examples/legend/demo.js) and [another one for data merging](https://github.com/timwis/leaflet-choropleth/blob/gh-pages/examples/fetch_join/demo.js), but I put this together.
 
@@ -111,7 +111,7 @@ with open("data.json", "w") as file:
 
 Before realizing that Leaflet is exactly what I need I was playing with [DataMaps](http://datamaps.github.io/), which is build upon [D3.js](https://d3js.org/). It uses TopoJSON (?) by default and a [projection system](https://github.com/d3/d3-geo/blob/master/README.md#projections) that allows one to create awesome interactive maps, but not really in that fashion I wanted.
 
-I have my geo data in GeoJSON format, so I converted it to TopoJSON with a nice [online tool for converting between GeoJSON and TopoJSON](http://jeffpaine.github.io/geojson-topojson/).
+I have my geodata in GeoJSON format, so I converted it to TopoJSON with a nice [online tool for converting between GeoJSON and TopoJSON](http://jeffpaine.github.io/geojson-topojson/).
 
 A simple, "living" example can be found [here](http://jsbin.com/pufejajama/edit?html,output).
 
