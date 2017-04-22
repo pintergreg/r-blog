@@ -11,7 +11,7 @@
 
   <link rel="stylesheet" href="/r-blog/css/main.css">
   <link rel="canonical" href="http://localhost:4000/r-blog/leaflet-choropleth">
-  <link rel="alternate" type="application/rss+xml" title="My little R knowledgebase" href="http://localhost:4000/r-blog/feed.xml">
+  <link rel="alternate" type="application/rss+xml" title="My little TIL knowledgebase" href="http://localhost:4000/r-blog/feed.xml">
 </head>
 
 
@@ -21,7 +21,7 @@
 
   <div class="wrapper">
 
-    <a class="site-title" href="/r-blog/">My little R knowledgebase</a>
+    <a class="site-title" href="/r-blog/">My little TIL knowledgebase</a>
 
     <nav class="site-nav">
       <a href="#" class="menu-icon">
@@ -63,7 +63,7 @@
 
   <div class="post-content" itemprop="articleBody">
     <p><a href="http://leafletjs.com/">Leaflet</a> is an “an open-source JavaScript library
-for mobile-friendly interactive maps”, that can <a href="http://leafletjs.com/examples/geojson/">plot GeoJSONs</a> onto an OSM map. Of course using this for creating choropleths is also <a href="http://leafletjs.com/examples/choropleth/">possible</a>, but I lack the automatic value scaling. I was not the only one, so a <a href="https://github.com/timwis/leaflet-choropleth">very nice extension was created</a> for the task, called.</p>
+for mobile-friendly interactive maps”, that can <a href="http://leafletjs.com/examples/geojson/">plot GeoJSONs</a> onto an OSM map. Of course using this for creating choropleth is also <a href="http://leafletjs.com/examples/choropleth/">possible</a>, but I lack the automatic value scaling. I was not the only one, so a <a href="https://github.com/timwis/leaflet-choropleth">very nice extension was created</a> for the task.</p>
 
 <p>It has a <a href="https://github.com/timwis/leaflet-choropleth/blob/gh-pages/examples/basic/demo.js">basic example</a>, <a href="https://github.com/timwis/leaflet-choropleth/blob/gh-pages/examples/legend/demo.js">one for legends</a> and <a href="https://github.com/timwis/leaflet-choropleth/blob/gh-pages/examples/fetch_join/demo.js">another one for data merging</a>, but I put this together.</p>
 
@@ -251,7 +251,7 @@ for mobile-friendly interactive maps”, that can <a href="http://leafletjs.com/
 
 <p>Before realizing that Leaflet is exactly what I need I was playing with <a href="http://datamaps.github.io/">DataMaps</a>, which is build upon <a href="https://d3js.org/">D3.js</a>. It uses TopoJSON (?) by default and a <a href="https://github.com/d3/d3-geo/blob/master/README.md#projections">projection system</a> that allows one to create awesome interactive maps, but not really in that fashion I wanted.</p>
 
-<p>I have my geo data in GeoJSON format, so I converted it to TopoJSON with a nice <a href="http://jeffpaine.github.io/geojson-topojson/">online tool for converting between GeoJSON and TopoJSON</a>.</p>
+<p>I have my geodata in GeoJSON format, so I converted it to TopoJSON with a nice <a href="http://jeffpaine.github.io/geojson-topojson/">online tool for converting between GeoJSON and TopoJSON</a>.</p>
 
 <p>A simple, “living” example can be found <a href="http://jsbin.com/pufejajama/edit?html,output">here</a>.</p>
 
@@ -274,12 +274,12 @@ for mobile-friendly interactive maps”, that can <a href="http://leafletjs.com/
 
   <div class="wrapper">
 
-    <h2 class="footer-heading">My little R knowledgebase</h2>
+    <h2 class="footer-heading">My little TIL knowledgebase</h2>
 
     <div class="footer-col-wrapper">
       <div class="footer-col footer-col-1">
         <ul class="contact-list">
-          <li>My little R knowledgebase</li>
+          <li>My little TIL knowledgebase</li>
           <li><a href="mailto:"></a></li>
         </ul>
       </div>
@@ -299,7 +299,7 @@ for mobile-friendly interactive maps”, that can <a href="http://leafletjs.com/
       </div>
 
       <div class="footer-col footer-col-3">
-        <p>My "Today I Learned" posts mainly about R.
+        <p>My "Today I Learned" posts mainly about R, Python and GIS.
 </p>
       </div>
     </div>

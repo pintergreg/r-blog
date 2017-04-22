@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>My little R knowledgebase</title>
-    <description>My &quot;Today I Learned&quot; posts mainly about R.
+    <title>My little TIL knowledgebase</title>
+    <description>My &quot;Today I Learned&quot; posts mainly about R, Python and GIS.
 </description>
     <link>http://localhost:4000/r-blog/</link>
     <atom:link href="http://localhost:4000/r-blog/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 20 Apr 2017 18:55:01 +0200</pubDate>
-    <lastBuildDate>Thu, 20 Apr 2017 18:55:01 +0200</lastBuildDate>
+    <pubDate>Sat, 22 Apr 2017 10:42:15 +0200</pubDate>
+    <lastBuildDate>Sat, 22 Apr 2017 10:42:15 +0200</lastBuildDate>
     <generator>Jekyll v3.4.3</generator>
     
       <item>
         <title>Leaflet choropleth</title>
         <description>&lt;p&gt;&lt;a href=&quot;http://leafletjs.com/&quot;&gt;Leaflet&lt;/a&gt; is an “an open-source JavaScript library
-for mobile-friendly interactive maps”, that can &lt;a href=&quot;http://leafletjs.com/examples/geojson/&quot;&gt;plot GeoJSONs&lt;/a&gt; onto an OSM map. Of course using this for creating choropleths is also &lt;a href=&quot;http://leafletjs.com/examples/choropleth/&quot;&gt;possible&lt;/a&gt;, but I lack the automatic value scaling. I was not the only one, so a &lt;a href=&quot;https://github.com/timwis/leaflet-choropleth&quot;&gt;very nice extension was created&lt;/a&gt; for the task, called.&lt;/p&gt;
+for mobile-friendly interactive maps”, that can &lt;a href=&quot;http://leafletjs.com/examples/geojson/&quot;&gt;plot GeoJSONs&lt;/a&gt; onto an OSM map. Of course using this for creating choropleth is also &lt;a href=&quot;http://leafletjs.com/examples/choropleth/&quot;&gt;possible&lt;/a&gt;, but I lack the automatic value scaling. I was not the only one, so a &lt;a href=&quot;https://github.com/timwis/leaflet-choropleth&quot;&gt;very nice extension was created&lt;/a&gt; for the task.&lt;/p&gt;
 
 &lt;p&gt;It has a &lt;a href=&quot;https://github.com/timwis/leaflet-choropleth/blob/gh-pages/examples/basic/demo.js&quot;&gt;basic example&lt;/a&gt;, &lt;a href=&quot;https://github.com/timwis/leaflet-choropleth/blob/gh-pages/examples/legend/demo.js&quot;&gt;one for legends&lt;/a&gt; and &lt;a href=&quot;https://github.com/timwis/leaflet-choropleth/blob/gh-pages/examples/fetch_join/demo.js&quot;&gt;another one for data merging&lt;/a&gt;, but I put this together.&lt;/p&gt;
 
@@ -201,7 +201,7 @@ for mobile-friendly interactive maps”, that can &lt;a href=&quot;http://leafle
 
 &lt;p&gt;Before realizing that Leaflet is exactly what I need I was playing with &lt;a href=&quot;http://datamaps.github.io/&quot;&gt;DataMaps&lt;/a&gt;, which is build upon &lt;a href=&quot;https://d3js.org/&quot;&gt;D3.js&lt;/a&gt;. It uses TopoJSON (?) by default and a &lt;a href=&quot;https://github.com/d3/d3-geo/blob/master/README.md#projections&quot;&gt;projection system&lt;/a&gt; that allows one to create awesome interactive maps, but not really in that fashion I wanted.&lt;/p&gt;
 
-&lt;p&gt;I have my geo data in GeoJSON format, so I converted it to TopoJSON with a nice &lt;a href=&quot;http://jeffpaine.github.io/geojson-topojson/&quot;&gt;online tool for converting between GeoJSON and TopoJSON&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I have my geodata in GeoJSON format, so I converted it to TopoJSON with a nice &lt;a href=&quot;http://jeffpaine.github.io/geojson-topojson/&quot;&gt;online tool for converting between GeoJSON and TopoJSON&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;A simple, “living” example can be found &lt;a href=&quot;http://jsbin.com/pufejajama/edit?html,output&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
